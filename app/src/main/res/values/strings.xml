@@ -3,7 +3,7 @@
     <string name="title_news">News</string>
     <string name="title_weather">Weather</string>
     <string name="title_emergency">Emergency</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="article_title">Title</string>
+    <string name="article_body">Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Curabitur ... Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+    <string name="article_button">SOURCE</string> //change soon
 </resources>

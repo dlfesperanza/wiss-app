@@ -1,14 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Emergency"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/hotlinebutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="31dp"
+            android:layout_marginLeft="31dp"
+            android:layout_marginTop="27dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:text="@string/emergency_hotline_button" />
+
+        <Button
+            android:id="@+id/contactsbutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginEnd="31dp"
+            android:layout_marginRight="31dp"
+            android:text="@string/emergency_contacts_button" />
+
+        <!--<Button-->
+        <!--android:id="@+id/emergencybutton"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="160dp"-->
+        <!--android:layout_below="@+id/hotlinebutton"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_marginStart="106dp"-->
+        <!--android:layout_marginLeft="106dp"-->
+        <!--android:layout_marginTop="97dp"-->
+        <!--android:layout_marginEnd="107dp"-->
+        <!--android:layout_marginRight="107dp"-->
+        <!--android:layout_marginBottom="273dp"-->
+        <!--android:text="@string/emergency_send" />-->
+        <at.markushi.ui.CircleButton
+            android:layout_width="match_parent"
+            android:layout_height="177dp"
+            android:layout_margin="80dp"
+            android:baselineAligned="false"
+            android:src="@drawable/ic_error_black_24dp"
+            app:cb_color="#CC3333"
+            app:cb_pressedRingWidth="8dip" />
+
+    </LinearLayout>
 
 </RelativeLayout>

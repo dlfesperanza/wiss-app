@@ -1,15 +1,12 @@
 package com.example.wiss;
 
 import android.os.Bundle;
-//import android.support.annotation.Nullable;
 
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,13 +51,13 @@ public class NewsFragment extends Fragment {
         return view;
     }
     private void prepareNewsArticleData() {
-        NewsArticle newsarticle = new NewsArticle("GOT7 World Tour 2019", "JB, Mark, Jackson, Jinyoung, Youngjae, Bambam, Yugyeom");
+        NewsArticle newsarticle = new NewsArticle("Lorem Ipsum", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis lorem quam, molestie iaculis nibh pulvinar ut. Quisque molestie magna ut metus blandit sodales. In hac habitasse platea dictumst. Pellentesque magna tortor, laoreet ut suscipit ac, iaculis sit amet ex. Cras vehicula ligula nec enim rhoncus pharetra. Quisque maximus vel lacus...");
         newsArticleList.add(newsarticle);
 
-        newsarticle = new NewsArticle("SABLAY 2019", "Dannah Louise Esperanza");
+        newsarticle = new NewsArticle("Phasellus auctor", "Phasellus auctor bibendum ex non venenatis. Donec iaculis dictum fermentum. Sed id pretium massa. Duis neque sem, finibus in dictum at, hendrerit quis urna. Nunc a sagittis urna, in tincidunt nisi. Vestibulum placerat nulla vitae nisl elementum eleifend. Mauris tristique sed diam ut pellentesque. Maecenas in lectus vitae nibh efficitur ultricies. Aliq...");
         newsArticleList.add(newsarticle);
 
-        newsarticle = new NewsArticle("Thank you", "Thank you God, Mama and GOT7.");
+        newsarticle = new NewsArticle("In volutpat odio", "In volutpat odio vel mi ullamcorper, eu auctor nulla aliquam. Mauris dapibus orci metus, quis tincidunt mauris maximus tempus. Suspendisse eget commodo neque. Nulla sed blandit lacus, eu sodales augue. Fusce auctor et dui sit amet auctor. Pellentesque et metus non massa dictum placerat vitae sit amet lacus. Sed efficitur non orci et laoreet...");
         newsArticleList.add(newsarticle);
 
         mAdapter.notifyDataSetChanged();

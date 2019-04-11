@@ -25,6 +25,7 @@
             android:layout_marginTop="27dp"
             android:layout_marginEnd="30dp"
             android:layout_marginRight="30dp"
+            android:drawableLeft="@android:drawable/ic_menu_call"
             android:text="@string/emergency_hotline_button" />
 
         <Button
@@ -36,7 +37,9 @@
             android:layout_marginTop="35dp"
             android:layout_marginEnd="31dp"
             android:layout_marginRight="31dp"
-            android:text="@string/emergency_contacts_button" />
+            android:drawableLeft="@android:drawable/ic_menu_sort_by_size"
+            android:text="@string/emergency_contacts_button"
+            android:textAlignment="center" />
 
         <!--<Button-->
         <!--android:id="@+id/emergencybutton"-->
@@ -59,8 +62,6 @@
             android:layout_width="match_parent"
             android:layout_height="177dp"
             android:layout_margin="80dp"
-            android:baselineAligned="false"
-            android:src="@drawable/ic_error_black_24dp"
             app:cb_color="#CC3333"
             app:cb_pressedRingWidth="8dip" />
 

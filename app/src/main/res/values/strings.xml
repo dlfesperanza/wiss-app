@@ -5,9 +5,33 @@
     <string name="title_emergency">Emergency</string>
     <string name="article_title">Title</string>
     <string name="article_body">Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Curabitur ... Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
-    <string name="article_button">SOURCE</string> //change soon
+    <string name="article_button">SOURCE</string>
+    //change soon
     <string name="emergency_send">SEND</string>
     <string name="emergency_contacts_button">CONTACT LIST</string>
     <string name="emergency_hotline_button">HOTLINE</string>
-    <!--<string name="weather_changecity">Change City/</string>-->
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--<string name=""></string>-->
+    <string name="title_neh">National Emergency Hotline</string>
+    <string name="number_neh">911</string>
+    <string name="title_dswd">Department of Social Welfare and Development (DSWD)</string>
+    <string name="number_dswd1">Text hotline: 0918-912-2813</string>
+    <string name="number_dswd2">Trunkline: (02)931-81-01</string>
+    <string name="number_dswd3">Disaster Response Unit 1: 856-3665</string>
+    <string name="number_dswd4">Disaster Response Unit: 852-8081</string>
+    <string name="title_prc">Philippine Red Cross</string>
+    <string name="number_prc1">Hotline 1: 143</string>
+    <string name="number_prc2">Hotline 2: (02)527-0000</string>
+    <string name="number_prc3">Hotline 3: (02)527-8385 to 95</string>
+    <string name="number_prc4">Disaster Mgmt. Office (Staff): 134</string>
+    <string name="number_prc5">Disaster Mgmt. Office (Manager): 132</string>
+    <string name="number_prc6">Disaster Mgmt. Office (Radio Room): 133</string>
+    <string name="title_mmda">Metro Manila Development Authority (MMDA)</string>
+    <string name="number_mmda1">Hotline: 136</string>
+    <string name="number_mmda2">Trunkline: (02)882-4150-77</string>
+    <string name="number_mmda3">Rescue: 337</string>
+    <string name="number_mmda4">Flood Control: (02)882-0925</string>
 </resources>

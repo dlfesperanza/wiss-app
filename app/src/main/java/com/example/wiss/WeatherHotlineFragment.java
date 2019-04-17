@@ -8,13 +8,17 @@ import android.view.ViewGroup;
 import android.net.Uri;
 import android.widget.Button;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 public class WeatherHotlineFragment extends Fragment implements View.OnClickListener {
+    private ActionBar toolbar;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.item_hotlines, container, false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(R.string.subtitle_emergencyhotlines);
         ((Button) view.findViewById(R.id.button_neh)).setOnClickListener(this);
         ((Button) view.findViewById(R.id.button_dswd1)).setOnClickListener(this);
         ((Button) view.findViewById(R.id.button_dswd2)).setOnClickListener(this);

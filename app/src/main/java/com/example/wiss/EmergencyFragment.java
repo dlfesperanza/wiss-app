@@ -11,6 +11,10 @@ import android.widget.TextView;
 
 import com.example.wiss.data.EmergencyContactsFragment;
 
+import org.json.JSONObject;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -22,13 +26,17 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class EmergencyFragment extends Fragment implements View.OnClickListener {
     Button hotlinebutton,contactsbutton;
+    private ActionBar toolbar;
     TextView textView;
+//    JSONObject selectedListObj = new JSONObject();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_emergency, container, false);
         ((Button) view.findViewById(R.id.hotlinebutton)).setOnClickListener(this);
         ((Button) view.findViewById(R.id.contactsbutton)).setOnClickListener(this);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(R.string.subtitle_empty);
+
 
 
         //just change the fragment_dashboard
@@ -49,11 +57,22 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                 fragmentTransaction.commit();
                 break;
             case R.id.contactsbutton:
-                Fragment fragment_emergency_contacts = new EmergencyContactsFragment();
+                Fragment fragment_emergency_contacts = new EmergencyContactsHomeFragment();
                 fragmentManager = getFragmentManager();
+
+//                Bundle args=new Bundle();
+//                String selectedContacts=selectedListObj.toString();
+//                args.putString("selectedContacts", selectedContacts);
+//                fragment_emergency_contacts.setArguments(args);
+
+
                 fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, fragment_emergency_contacts);
-                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.add(R.id.fragment_container,fragment_emergency_contacts,"tag_emergency_contacts_home");
+                fragmentTransaction.replace(R.id.fragment_container, fragment_emergency_contacts,"tag_emergency_contacts_home");
+//
+
+                fragmentTransaction.addToBackStack("tag_emergency_contacts_home");
+
                 fragmentTransaction.commit();
                 break;
         }

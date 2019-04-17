@@ -34,4 +34,8 @@
     <string name="number_mmda2">Trunkline: (02)882-4150-77</string>
     <string name="number_mmda3">Rescue: 337</string>
     <string name="number_mmda4">Flood Control: (02)882-0925</string>
+    <string name="subtitle_addcontacts">Add Emergency Contacts</string>
+    <string name="subtitle_contacts">Emergency Contacts</string>
+    <string name="subtitle_empty"></string>
+    <string name="subtitle_emergencyhotlines">Hotlines</string>
 </resources>

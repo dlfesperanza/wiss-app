@@ -1,21 +1,29 @@
 package com.example.wiss;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.text.Html;
 import android.view.View;
 import android.widget.EditText;
@@ -26,27 +34,40 @@ import android.widget.Toast;
 import android.widget.Button;
 
 import com.example.wiss.data.WeatherFunction;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-public class WeatherFragment extends Fragment {
+public class WeatherFragment extends Fragment implements LocationListener{
     // Project Created by Ferdousur Rahman Shajib
     // www.androstock.com
 
     TextView selectCity, cityField, detailsField, currentTemperatureField, humidity_field, pressure_field, weatherIcon, updatedField, day1, day2, day3, day4, day5, day1_icon, day2_icon, day3_icon, day4_icon, day5_icon, day1_temp, day2_temp, day3_temp, day4_temp, day5_temp;
     ProgressBar loader;
     Typeface weatherFont;
-    String city = "Rodriguez, PH";
+    String city;
     /* Please Put your API KEY here */
     String OPEN_WEATHER_MAP_API = "1a8b15bb29c60aa92524f6939e91b100";
     /* Please Put your API KEY here */
+    LocationManager locationMn;
+    public Double latitude;
+    public Double longitude;
+    public LocationManager locationManager;
+    public Criteria criteria;
+    public String bestProvider;
 
-//    @Nullable
+    //    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,15 +112,33 @@ public class WeatherFragment extends Fragment {
         day5_temp = (TextView) view.findViewById(R.id.day5_temp);
 
 
-
         taskLoadUp(city);
 
-//        private final LocationListener locationListener = new LocationListener() {
-//            public void onLocationChanged(Location location) {
-//                double longitude = location.getLongitude();
-//                double latitude = location.getLatitude();
-//            }
-//        }
+        locationManager = (LocationManager)  getActivity().getSystemService(Context.LOCATION_SERVICE);
+        criteria = new Criteria();
+        bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
+
+
+        try{
+            Location location = locationManager.getLastKnownLocation(bestProvider);
+            if (location != null) {
+                Log.e("TAG", "GPS is on");
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+            }
+            else{
+                //This is what you need:
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+//                locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
+                System.out.println("NULL BRO--------------");
+            }
+        }catch(SecurityException e){
+            e.printStackTrace();
+        }
+
+
 
         selectCity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +172,6 @@ public class WeatherFragment extends Fragment {
         });
 
 
-
         //just change the fragment_dashboard
         //with the fragment you want to inflate
         //like if the class is HomeFragment it should have R.layout.home_fragment
@@ -147,40 +185,45 @@ public class WeatherFragment extends Fragment {
             DownloadWeather task = new DownloadWeather();
 
 
-
             task.execute(query);
         } else {
             Toast.makeText(getActivity().getApplicationContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
         }
     }
 
-    class DownloadWeather extends AsyncTask < String, Void, String > {
+    class DownloadWeather extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             loader.setVisibility(View.VISIBLE);
 
         }
-        protected String doInBackground(String...args) {
-//            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-//            Location location;
-//            String LON,LAT;
-////            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            try {
-//                location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                LON = Double.toString(location.getLongitude());
-//                LAT = Double.toString(location.getLatitude());
-//            } catch (SecurityException e) {
-//                LAT = "38";
-//                LON = "139";
-//                e.printStackTrace();
-//            }
+
+        protected String doInBackground(String... args) {
+            latitude = getLatitude();
+            longitude = getLongitude();
+
+            String xml = "";
+
+
+            while (latitude == null && longitude == null){
+                latitude = getLatitude();
+                longitude = getLongitude();
+                System.out.println("IN BACKGROUND: " + latitude + ". " + longitude);
+            }
+
+            if (city==null){
+                xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/forecast?lat="+latitude+"&lon="+longitude+"&appid=" + OPEN_WEATHER_MAP_API);
+            }else{
+                xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/forecast?q=" + args[0] + "&units=metric&appid=" + OPEN_WEATHER_MAP_API);
+
+            }
+
+
 //
-//            String xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/weather?lat="+LAT+"&lon="+LON+"&appid=" + OPEN_WEATHER_MAP_API);
-            String xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/forecast?q=" + args[0] +
-                    "&units=metric&appid=" + OPEN_WEATHER_MAP_API);
-            return xml;
+           return xml;
         }
+
         @Override
         protected void onPostExecute(String xml) {
 
@@ -229,15 +272,52 @@ public class WeatherFragment extends Fragment {
 
                     loader.setVisibility(View.GONE);
 
+//                    -273.15
+
                 }
             } catch (JSONException e) {
                 Toast.makeText(getContext().getApplicationContext(), "Error, Check City", Toast.LENGTH_SHORT).show();
             }
 
-
         }
+    }
+    @Override
+    public void onLocationChanged(Location location) {
+        //Hey, a non null location! Sweet!
 
+        //remove location callback:
+        locationManager.removeUpdates(this);
 
+        //open the map:
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+//        Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+        System.out.println("latitude:" + latitude + " longitude:" + longitude);
+//        latitude =  new Double(35);
+//        longitude = new Double(139);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    Double getLatitude(){
+        return this.latitude;
+    }
+
+    Double getLongitude(){
+        return this.longitude;
+    }
+
 }

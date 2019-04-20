@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.wiss.EmergencyContactsHomeFragment;
 import com.example.wiss.R;
 import com.example.wiss.WeatherHotlineFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -39,7 +40,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class EmergencyContactsFragment extends Fragment implements View.OnClickListener{
+public class EmergencyContactsFragment extends Fragment{
     ListView listView;
     List<String> selectedItems = new ArrayList<>();
     ArrayList<JSONObject> contacts = new ArrayList<>();
@@ -67,8 +68,44 @@ public class EmergencyContactsFragment extends Fragment implements View.OnClickL
         }
 //
         View view = inflater.inflate(R.layout.item_contacts, container, false);
-        ((Button) view.findViewById(R.id.button_selectcontacts)).setOnClickListener(this);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(R.string.subtitle_addcontacts);
+
+        FloatingActionButton myFab = (FloatingActionButton) view.findViewById(R.id.button_selectcontacts);
+
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.button_selectcontacts:
+                        String items="";
+                        String value = "";
+                        for(String item:selectedItems){
+//            items+="-"+item+"\n";
+                            try {
+                                value = obj.getString(item);
+
+                                selectedListObj.put(item,value);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                        savedContactsLocal = gson.toJson(selectedItems);
+
+                        List<String> list2 = gson.fromJson(savedContactsLocal,type);
+
+                        list1.addAll(list2);
+                        String allContactsLocal = gson.toJson(list1);
+
+                        prefsEditor.putString("MyObject", allContactsLocal);
+                        prefsEditor.commit();
+
+                        System.out.println(list1);
+                        getFragmentManager().popBackStackImmediate();
+                        break;
+                }
+
+            }
+        });
 
 
         appSharedPrefs = PreferenceManager
@@ -108,14 +145,6 @@ public class EmergencyContactsFragment extends Fragment implements View.OnClickL
         listView.setAdapter(simpleCursorAdapter);
 
 
-
-//        for (String contact:list1){
-//            System.out.println("check: " + contact);
-//        }
-
-//        System.out.println("list:" +list);
-//        System.out.println("list1:" +list1);
-
         for (int i=0; i<list.size(); i++){
             for (int j=0; j<list1.size(); j++) {
                 if (list.get(i).equals(list1.get(j))){
@@ -144,73 +173,5 @@ public class EmergencyContactsFragment extends Fragment implements View.OnClickL
 
 
         return view;
-    }
-
-    @Override
-    public void onClick(View view){
-        String items="";
-        String value = "";
-        for(String item:selectedItems){
-//            items+="-"+item+"\n";
-            try {
-                value = obj.getString(item);
-
-                selectedListObj.put(item,value);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-        savedContactsLocal = gson.toJson(selectedItems);
-
-        List<String> list2 = gson.fromJson(savedContactsLocal,type);
-
-        list1.addAll(list2);
-        String allContactsLocal = gson.toJson(list1);
-
-
-
-//        System.out.println("Object: " + selectedListObj);
-//        Log.d("TAG","saved contacts = " + savedContactsLocal);
-
-
-
-        prefsEditor.putString("MyObject", allContactsLocal);
-        prefsEditor.commit();
-
-//        List<String> list2 = gson.fromJson(savedContactsLocal, type);
-//        Log.d("TAG","saved contacts READ = " + savedContactsLocal2);
-        System.out.println(list1);
-
-        switch (view.getId()) {
-            case R.id.button_selectcontacts:
-//                Toast.makeText(getContext().getApplicationContext(), "Contact(s) added successfully!", Toast.LENGTH_SHORT).show();
-
-
-//                int index = getActivity().getFragmentManager().getBackStackEntryCount() - 1;
-//                System.out.println(index);
-//                FragmentManager.BackStackEntry backEntry = getFragmentManager().getBackStackEntryAt(index);
-//                String tag = backEntry.getName();
-
-//                Fragment currentFragment = new EmergencyContactsFragment();
-
-//                Fragment fragment_emergency_contacts = new EmergencyContactsHomeFragment();
-//                fragment_emergency_contacts.setArguments(args);
-//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment_emergency_contacts).commit();
-
-//                assert getFragmentManager() != null;
-
-//                Bundle args=new Bundle();
-//                String selectedContacts=selectedListObj.toString();
-//                args.putString("selectedContacts", selectedContacts);
-
-//                Fragment fragment = getFragmentManager().findFragmentByTag("tag_emergency_contacts_home");
-//                fragment.setArguments(args);
-
-
-
-                getFragmentManager().popBackStackImmediate();
-                break;
-        }
     }
 }

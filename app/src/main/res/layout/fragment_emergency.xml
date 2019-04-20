@@ -59,6 +59,7 @@
         <!--android:layout_marginBottom="273dp"-->
         <!--android:text="@string/emergency_send" />-->
         <at.markushi.ui.CircleButton
+            android:id="@+id/panicbutton"
             android:layout_width="match_parent"
             android:layout_height="177dp"
             android:layout_margin="80dp"

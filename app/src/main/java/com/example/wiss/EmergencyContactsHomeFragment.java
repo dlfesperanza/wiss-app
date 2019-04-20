@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.example.wiss.data.EmergencyContactsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -40,14 +42,14 @@ public class EmergencyContactsHomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-//        try {
-//            String selectedContacts=getArguments().getString("selectedContacts");
-//            jsonObject=new JSONObject(selectedContacts);
-//
-//            System.out.println("Fragment: "+jsonObject);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            String phoneContacts=getArguments().getString("phoneContacts");
+            obj=new JSONObject(phoneContacts);
+
+            System.out.println("Fragment (All Contacts): "+obj);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
@@ -58,21 +60,21 @@ public class EmergencyContactsHomeFragment extends Fragment {
 
         Log.d("TAG","FRAGMENT = " + contacts);
 
-        try {
-            Cursor phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-
-            while (phones.moveToNext()) {
-                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                obj.put(name, phoneNumber);
-//                contacts.add(obj);
-
-            }
-            phones.close();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+//        try {
+//            Cursor phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+//
+//            while (phones.moveToNext()) {
+//                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+//                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+//                obj.put(name, phoneNumber);
+////                contacts.add(obj);
+//
+//            }
+//            phones.close();
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//        }
 
         View view = inflater.inflate(R.layout.fragment_emergency_contacts, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(R.string.subtitle_contacts);
@@ -105,17 +107,29 @@ public class EmergencyContactsHomeFragment extends Fragment {
         String[] items = contacts.toArray(new String[contacts.size()]);
 
         ListView listView = (ListView) view.findViewById(R.id.listview_favcontacts);
-        ArrayAdapter<String> simpleCursorAdapter = new ArrayAdapter<String>(view.getContext(),R.layout.item_contactdisplay,R.id.displaytextview,items);
+//        ArrayAdapter<String> simpleCursorAdapter = new ArrayAdapter<String>(view.getContext(),R.layout.item_contactdisplay,R.id.displaytextview,items);
+        ArrayAdapter<String> simpleCursorAdapter = new ArrayAdapter<String>(view.getContext(),R.layout.item_contactdisplay,R.id.displaytextview,items){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent){
+                // Cast the list view each item as text view
+                TextView item = (TextView) super.getView(position,convertView,parent);
+
+
+                // Change the item text size
+                item.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16);
+
+                // return the view
+                return item;
+            }
+        };
+
         listView.setAdapter(simpleCursorAdapter);
 
-//        int[] to = {android.R.id.text1, android.R.id.text2};
-//        SimpleCursorAdapter listadapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, cursor, from, to);
-//        setListAdapter(listadapter);
 
         for (String temp : contacts) {
             if (obj.has(temp)) {
                 try {
-                    System.out.println("in obj: "+obj.getString(temp));
+                    System.out.println("in obj home: "+obj.getString(temp));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

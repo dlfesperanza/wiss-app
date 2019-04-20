@@ -60,22 +60,6 @@ public class EmergencyContactsHomeFragment extends Fragment {
 
         Log.d("TAG","FRAGMENT = " + contacts);
 
-//        try {
-//            Cursor phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-//
-//            while (phones.moveToNext()) {
-//                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-//                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-//                obj.put(name, phoneNumber);
-////                contacts.add(obj);
-//
-//            }
-//            phones.close();
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//        }
-
         View view = inflater.inflate(R.layout.fragment_emergency_contacts, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(R.string.subtitle_contacts);
         FloatingActionButton myFab = (FloatingActionButton) view.findViewById(R.id.button_addcontacts);

@@ -2,12 +2,14 @@ package com.example.wiss;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,12 +41,16 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -66,6 +72,10 @@ public class WeatherFragment extends Fragment implements LocationListener{
     public LocationManager locationManager;
     public Criteria criteria;
     public String bestProvider;
+    List<String> list1;
+    SharedPreferences appSharedPrefs;
+    Gson gson = new Gson();
+    SharedPreferences.Editor prefsEditor;
 
     //    @Nullable
     @Override
@@ -295,6 +305,23 @@ public class WeatherFragment extends Fragment implements LocationListener{
         System.out.println("latitude:" + latitude + " longitude:" + longitude);
 //        latitude =  new Double(35);
 //        longitude = new Double(139);
+
+        appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
+        prefsEditor = appSharedPrefs.edit();
+
+//        String json = appSharedPrefs.getString("MyLocation", "");
+//        Type type = new TypeToken<List<String>>(){}.getType();
+
+        List<String> locList = new ArrayList<>();
+
+        locList.add(longitude.toString());
+        locList.add(latitude.toString());
+        String savedLocation = gson.toJson(locList);
+
+        prefsEditor.putString("MyLocation", savedLocation);
+        prefsEditor.commit();
+
     }
 
     @Override

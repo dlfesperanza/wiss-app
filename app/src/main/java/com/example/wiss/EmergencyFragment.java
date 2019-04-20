@@ -1,7 +1,13 @@
 package com.example.wiss;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
@@ -13,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.wiss.data.EmergencyContactsFragment;
 import com.google.gson.Gson;
@@ -23,9 +30,12 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -38,10 +48,16 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class EmergencyFragment extends Fragment implements View.OnClickListener {
     Button hotlinebutton,contactsbutton;
+    Context context;
     private ActionBar toolbar;
     TextView textView;
     JSONObject obj = new JSONObject();
     List<String> contactList = new ArrayList<>();
+    SharedPreferences appSharedPrefs;
+    Gson gson = new Gson();
+    SharedPreferences.Editor prefsEditor;
+    String savedContactsLocal;
+    Type type;
 //    JSONObject selectedListObj = new JSONObject();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,6 +67,7 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
         ((Button) view.findViewById(R.id.contactsbutton)).setOnClickListener(this);
         view.findViewById(R.id.panicbutton).setOnClickListener(this);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(R.string.subtitle_empty);
+        context = getActivity();
 
 
         SharedPreferences appSharedPrefs = PreferenceManager
@@ -61,6 +78,8 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
         List<String> contacts = gson.fromJson(json,type);
 
         Log.d("TAG","FRAGMENT = " + contacts);
+
+
 
         try {
             Cursor phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
@@ -91,6 +110,8 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
         }
 
         System.out.println("contact list array:" + contactList);
+
+
 
         return view;
     }
@@ -125,11 +146,34 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                 fragmentTransaction.commit();
                 break;
             case R.id.panicbutton:
-                String messageToSend = "PARA KAY MAMA SAKA SA AKING MGA KPOP BOYS HUHU";
-                for (String number : contactList){
-                    SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
-                    System.out.println("Sent to " + number);
-                }
+
+                SharedPreferences appSharedPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
+                Gson gson = new Gson();
+                String json = appSharedPrefs.getString("MyLocation", "");
+                Type type = new TypeToken<List<String>>(){}.getType();
+                final List<String> savedLocation = gson.fromJson(json,type);
+
+                System.out.println("--Location saved in Emergency: " + savedLocation);
+
+                final Date currentTime = Calendar.getInstance().getTime();
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Emergency Button")
+                        .setMessage("Send SMS alert to your specified contacts?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String messageToSend = "EMERGENCY ALERT: I'm at risk. Pls send help or assistance. My location coordinates are: "+savedLocation.get(0)+", "+savedLocation.get(1)+". Sent "+currentTime;
+//                                String messageToSend = "EMERGENCY ALERT!";
+                                System.out.println(messageToSend);
+                                for (String number : contactList){
+                                    SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
+                                    System.out.println("Sent to " + number);
+                                }
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
+//
 
 
                 break;

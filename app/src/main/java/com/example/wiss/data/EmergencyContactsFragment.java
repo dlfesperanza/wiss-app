@@ -79,7 +79,6 @@ public class EmergencyContactsFragment extends Fragment{
                         String items="";
                         String value = "";
                         for(String item:selectedItems){
-//            items+="-"+item+"\n";
                             try {
                                 value = obj.getString(item);
 

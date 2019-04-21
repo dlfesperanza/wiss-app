@@ -40,6 +40,7 @@ public class NewsFragment extends Fragment {
     private ArrayList<String> mBlogSourceList = new ArrayList<>();
     private ArrayList<String> mBlogBodyList = new ArrayList<>();
     private ArrayList<String> mBlogLinkList = new ArrayList<>();
+    private ArrayList<String> mBlogImageList = new ArrayList<>();
     public Context context;
 
     @Nullable
@@ -92,7 +93,7 @@ public class NewsFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressDialog = new ProgressDialog(getContext());
-            mProgressDialog.setTitle("Android Basic JSoup Tutorial");
+//            mProgressDialog.setTitle("Android Basic JSoup Tutorial");
             mProgressDialog.setMessage("Loading...");
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.show();
@@ -109,8 +110,18 @@ public class NewsFragment extends Fragment {
                 for(Element item : mElementLinkSize){
                     String link  = item.attr("href");
                     mBlogLinkList.add(link);
-                    System.out.println("LINK NewsFragment: " + link);
+//                    System.out.println("LINK NewsFragment: " + link);
                 }
+//                Elements mElementImageSize = mBlogDocument.select("article[class=clearfix] + a + img");
+//                for(Element item : mElementImageSize){
+//                    String img  = item.attr("src");
+////                    mBlogLinkList.add(link);
+//                    System.out.println("Image NewsFragment: " + img);
+//                    mBlogImageList.add(img);
+//                }
+
+
+
                 // Locate the content attribute
                 int mElementSize = mElementDataSize.size();
 
@@ -131,14 +142,20 @@ public class NewsFragment extends Fragment {
 //                    Elements mElementBlogLink = mBlogDocument.select("a[href]").eq(i);
 //                    String mBlogLink = mElementBlogLink.text();
 
-//                    Elements mElementBlogBody = mBlogDocument.select("p").eq(i);
-//                    String mBlogBody = mElementBlogBody.text();
+                    Elements mElementBlogBody = mBlogDocument.select("p[class=text-gray] + p").eq(i);
+                    String mBlogBody = mElementBlogBody.text();
+
+                    Elements mElementImageBody = mBlogDocument.select("img[class=col-3 first]").eq(i);
+                    String mBlogImage = mElementImageBody.attr("src");
+//                    String mBlogImage = url.text();
 
                     mBlogSourceList.add(mBlogSource);
                     mBlogUploadDateList.add(mBlogUploadDate);
                     mBlogTitleList.add(mBlogTitle);
 
-//                    mBlogBodyList.add(mBlogBody);
+                    mBlogBodyList.add(mBlogBody);
+                    mBlogImageList.add(mBlogImage);
+//                    System.out.println("img: " + mBlogImage);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -150,7 +167,7 @@ public class NewsFragment extends Fragment {
         protected void onPostExecute(Void result) {
             NewsArticle newsarticle;
             for (int i=0;i < mBlogTitleList.size();i++){
-                newsarticle = new NewsArticle(mBlogTitleList.get(i),mBlogSourceList.get(i),mBlogUploadDateList.get(i),mBlogLinkList.get(i),context);
+                newsarticle = new NewsArticle(mBlogImageList.get(i),mBlogTitleList.get(i),mBlogSourceList.get(i),mBlogUploadDateList.get(i),mBlogBodyList.get(i),mBlogLinkList.get(i),context);
                 newsArticleList.add(newsarticle);
 //                System.out.println("LINK:" + mBlogLinkList.get(i));
             }

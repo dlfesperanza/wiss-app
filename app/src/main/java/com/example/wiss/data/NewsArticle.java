@@ -3,19 +3,21 @@ package com.example.wiss.data;
 import android.content.Context;
 
 public class NewsArticle {
-    private String title, body, date, source, link;
+    private String title, body, date, source, link, image;
     private Context context;
 
     public NewsArticle(){
 
     }
 
-    public NewsArticle(String title, String source, String date, String link, Context context){
+    public NewsArticle(String image, String title, String source, String date, String body, String link, Context context){
         this.title = title;
         this.source = source;
         this.date = date;
         this.link = link;
         this.context = context;
+        this.body = body;
+        this.image = image;
     }
 
     public String getTitle(){
@@ -45,4 +47,6 @@ public class NewsArticle {
     public String getLink() { return link; }
 
     public Context getContext() { return context; }
+
+    public String getImage() { return image; }
 }

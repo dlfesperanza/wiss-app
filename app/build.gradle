@@ -56,4 +56,5 @@ dependencies {
     implementation 'com.github.markushi:circlebutton:1.1'
     implementation "com.google.android.gms:play-services-location:11.0.1"
     implementation 'org.jsoup:jsoup:1.11.2'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

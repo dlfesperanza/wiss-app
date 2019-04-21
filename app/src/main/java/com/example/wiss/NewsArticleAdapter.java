@@ -11,9 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.wiss.data.NewsArticle;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleAdapter.
         public TextView title, body, date, source;
         public Button linkButton;
         public CardView cardview;
+        public ImageView imageview;
 
 
         public MyViewHolder(View view) {
@@ -41,6 +44,7 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleAdapter.
             source = (TextView) view.findViewById(R.id.newssource);
             body = (TextView) view.findViewById(R.id.newsbody);
             linkButton = ((Button) view.findViewById(R.id.newsbutton));
+            imageview = (ImageView) view.findViewById(R.id.newsimage);
             linkButton.setOnClickListener(this);
         }
 
@@ -79,14 +83,17 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleAdapter.
         holder.date.setText(article.getDate());
         holder.source.setText(article.getSource());
 
-
         context = article.getContext();
         link = "https://news.abs-cbn.com";
         link = link.concat(article.getLink());
         System.out.println("LINK-- " + link);
-//        holder.linkButton.set(article.getLink());
-        holder.body.setText(link);
+        holder.body.setText(article.getBody());
         holder.linkButton.setTag(position);
+
+        Picasso.get()
+                .load(article.getImage())
+                .into(holder.imageview);
+
     }
 
 

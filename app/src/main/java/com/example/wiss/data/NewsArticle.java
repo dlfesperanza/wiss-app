@@ -1,15 +1,21 @@
 package com.example.wiss.data;
 
+import android.content.Context;
+
 public class NewsArticle {
-    private String title, body;
+    private String title, body, date, source, link;
+    private Context context;
 
     public NewsArticle(){
 
     }
 
-    public NewsArticle(String title, String body){
+    public NewsArticle(String title, String source, String date, String link, Context context){
         this.title = title;
-        this.body = body;
+        this.source = source;
+        this.date = date;
+        this.link = link;
+        this.context = context;
     }
 
     public String getTitle(){
@@ -27,4 +33,16 @@ public class NewsArticle {
     public void setBody(String body){
         this.body = body;
     }
+
+    public String getDate() {  return date; }
+
+    public void setDate(String date) { this.date = date; }
+
+    public void setSource(String source) { this.source = source; }
+
+    public String getSource() { return source; }
+
+    public String getLink() { return link; }
+
+    public Context getContext() { return context; }
 }

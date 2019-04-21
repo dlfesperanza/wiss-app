@@ -52,8 +52,8 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleAdapter.
         public void onClick(View v) {
             int pos = (int) v.getTag();
             System.out.println("Button position: " + pos);
-            String url = "https://news.abs-cbn.com";
-            url = url.concat(newsArticleList.get(pos).getLink());
+//            String url = "https://news.abs-cbn.com";
+            String url = newsArticleList.get(pos).getLink();
             System.out.println("Button link:" + url);
             Intent browserIntent = new Intent(
                     Intent.ACTION_VIEW,

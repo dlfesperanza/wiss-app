@@ -34,7 +34,9 @@ public class NewsFragment extends Fragment {
     private RecyclerView recyclerView;
     private NewsArticleAdapter mAdapter;
     private ProgressDialog mProgressDialog;
-    private String url = "https://news.abs-cbn.com/list/tag/weather";
+    private String url1 = "https://news.abs-cbn.com/list/tag/weather";
+    private String url2 = "https://www.rappler.com/previous-articles?filterCategory=223";
+    private String url3 = "https://newsinfo.inquirer.net/tag/weather";
     private ArrayList<String> mBlogTitleList = new ArrayList<>();
     private ArrayList<String> mBlogUploadDateList = new ArrayList<>();
     private ArrayList<String> mBlogSourceList = new ArrayList<>();
@@ -67,24 +69,12 @@ public class NewsFragment extends Fragment {
         context = getContext();
 
         new Description().execute();
-//        prepareNewsArticleData();
 
 
 
         return view;
     }
-    private void prepareNewsArticleData() {
-//        NewsArticle newsarticle = new NewsArticle("Lorem Ipsum", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis lorem quam, molestie iaculis nibh pulvinar ut. Quisque molestie magna ut metus blandit sodales. In hac habitasse platea dictumst. Pellentesque magna tortor, laoreet ut suscipit ac, iaculis sit amet ex. Cras vehicula ligula nec enim rhoncus pharetra. Quisque maximus vel lacus...");
-//        newsArticleList.add(newsarticle);
-//
-//        newsarticle = new NewsArticle("Phasellus auctor", "Phasellus auctor bibendum ex non venenatis. Donec iaculis dictum fermentum. Sed id pretium massa. Duis neque sem, finibus in dictum at, hendrerit quis urna. Nunc a sagittis urna, in tincidunt nisi. Vestibulum placerat nulla vitae nisl elementum eleifend. Mauris tristique sed diam ut pellentesque. Maecenas in lectus vitae nibh efficitur ultricies. Aliq...");
-//        newsArticleList.add(newsarticle);
-//
-//        newsarticle = new NewsArticle("In volutpat odio", "In volutpat odio vel mi ullamcorper, eu auctor nulla aliquam. Mauris dapibus orci metus, quis tincidunt mauris maximus tempus. Suspendisse eget commodo neque. Nulla sed blandit lacus, eu sodales augue. Fusce auctor et dui sit amet auctor. Pellentesque et metus non massa dictum placerat vitae sit amet lacus. Sed efficitur non orci et laoreet...");
-//        newsArticleList.add(newsarticle);
 
-        mAdapter.notifyDataSetChanged();
-    }
 
     private class Description extends AsyncTask<Void, Void, Void> {
         String desc;
@@ -102,52 +92,35 @@ public class NewsFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                // Connect to the web site
-                Document mBlogDocument = Jsoup.connect(url).get();
-                // Using Elements to get the Meta data
-                Elements mElementDataSize = mBlogDocument.select("article[class=clearfix]");
-                Elements mElementLinkSize = mBlogDocument.select("article[class=clearfix] > a");
+                // ABS-CBN
+                Document mBlogDocument1 = Jsoup.connect(url1).get();
+                Elements mElementDataSize = mBlogDocument1.select("article[class=clearfix]");
+                Elements mElementLinkSize = mBlogDocument1.select("article[class=clearfix] > a");
                 for(Element item : mElementLinkSize){
-                    String link  = item.attr("href");
-                    mBlogLinkList.add(link);
+                    String link = "https://news.abs-cbn.com";
+                    String link2  = item.attr("href");
+                    mBlogLinkList.add(link.concat(link2));
 //                    System.out.println("LINK NewsFragment: " + link);
                 }
-//                Elements mElementImageSize = mBlogDocument.select("article[class=clearfix] + a + img");
-//                for(Element item : mElementImageSize){
-//                    String img  = item.attr("src");
-////                    mBlogLinkList.add(link);
-//                    System.out.println("Image NewsFragment: " + img);
-//                    mBlogImageList.add(img);
-//                }
 
-
-
-                // Locate the content attribute
                 int mElementSize = mElementDataSize.size();
 
                 for (int i = 0; i < mElementSize; i++) {
-//                    Elements mElementAuthorName = mBlogDocument.select("span[class=vcard author post-author test]").select("a").eq(i);
-//                    String mLink = mElementAuthorName.text();
 
-                    Elements mElementBlogTitle = mBlogDocument.select("p[class=title]").select("a").eq(i);
+                    Elements mElementBlogTitle = mBlogDocument1.select("p[class=title]").select("a").eq(i);
                     String mBlogTitle = mElementBlogTitle.text();
 
-                    Elements mElementBlogSource = mBlogDocument.select("span[class=author]").eq(i);
+                    Elements mElementBlogSource = mBlogDocument1.select("span[class=author]").eq(i);
                     String mBlogSource = mElementBlogSource.text();
 
-
-                    Elements mElementBlogUploadDate = mBlogDocument.select("span[class=datetime]").eq(i);
+                    Elements mElementBlogUploadDate = mBlogDocument1.select("span[class=datetime]").eq(i);
                     String mBlogUploadDate = mElementBlogUploadDate.text();
 
-//                    Elements mElementBlogLink = mBlogDocument.select("a[href]").eq(i);
-//                    String mBlogLink = mElementBlogLink.text();
-
-                    Elements mElementBlogBody = mBlogDocument.select("p[class=text-gray] + p").eq(i);
+                    Elements mElementBlogBody = mBlogDocument1.select("p[class=text-gray] + p").eq(i);
                     String mBlogBody = mElementBlogBody.text();
 
-                    Elements mElementImageBody = mBlogDocument.select("img[class=col-3 first]").eq(i);
+                    Elements mElementImageBody = mBlogDocument1.select("img[class=col-3 first]").eq(i);
                     String mBlogImage = mElementImageBody.attr("src");
-//                    String mBlogImage = url.text();
 
                     mBlogSourceList.add(mBlogSource);
                     mBlogUploadDateList.add(mBlogUploadDate);
@@ -157,6 +130,87 @@ public class NewsFragment extends Fragment {
                     mBlogImageList.add(mBlogImage);
 //                    System.out.println("img: " + mBlogImage);
                 }
+                // Rappler
+                Document mBlogDocument2 = Jsoup.connect(url2).get();
+                mElementDataSize = mBlogDocument2.select("div[class=col-xs-12 col-sm-8]");
+
+                mElementSize = mElementDataSize.size();
+
+                for (int i = 0; i < mElementSize; i++) {
+                    //title
+                    Elements mElementBlogTitle = mBlogDocument2.select("h3[class=no-margin]").select("a").eq(i);
+                    String mBlogTitle = mElementBlogTitle.text();
+                    //author
+//                    Elements mElementBlogSource = mBlogDocument2.select("span[class=author]").eq(i);
+                    String mBlogSource = "RAPPLER";
+                    //datetime
+                    Elements mElementBlogUploadDate = mBlogDocument2.select("div[class=padding bottom]").select("span").eq(i);
+                    String mBlogUploadDate = mElementBlogUploadDate.text();
+                    //body
+                    Elements mElementBlogBody = mBlogDocument2.select("div[class=padding bottom] + p").eq(i);
+                    String mBlogBody = mElementBlogBody.text();
+                    //image
+                    Elements mElementImageBody = mBlogDocument2.select("img[class=rappler_asset]").eq(i);
+                    String mBlogImage = mElementImageBody.attr("data-original");
+
+                    Elements mElementLinkBody = mBlogDocument2.select("h3[class=no-margin] > a").eq(i);
+                    String mBlogLink = mElementLinkBody.attr("href");
+
+                    String link = "https://www.rappler.com";
+//                    String dummyIMG = "https://pbs.twimg.com/media/D4pIj4SUwAAk7CN.jpg";
+
+
+                    mBlogTitleList.add(mBlogTitle);
+                    mBlogSourceList.add(mBlogSource);
+                    mBlogUploadDateList.add(mBlogUploadDate);
+                    mBlogBodyList.add(mBlogBody);
+                    mBlogImageList.add(mBlogImage);
+                    mBlogLinkList.add(link.concat(mBlogLink));
+
+//                    System.out.println("LINKEU: " + mBlogLink);
+                }
+                // Inquirer
+                Document mBlogDocument3 = Jsoup.connect(url3).get();
+                mElementDataSize = mBlogDocument3.select("div[id=ch-cat]");
+
+                mElementSize = mElementDataSize.size();
+
+                for (int i = 0; i < mElementSize; i++) {
+                    //title
+                    Elements mElementBlogTitle = mBlogDocument3.select("div[id=ch-cat] + h2").select("a").eq(i);
+                    String mBlogTitle = mElementBlogTitle.text();
+                    //author
+//                    Elements mElementBlogSource = mBlogDocument2.select("span[class=author]").eq(i);
+                    String mBlogSource = "INQUIRER";
+                    //datetime
+                    Elements mElementBlogUploadDate = mBlogDocument3.select("div[id=ch-postdate] > span").eq(i);
+                    String mBlogUploadDate = mElementBlogUploadDate.text();
+                    //body
+//                    Elements mElementBlogBody = mBlogDocument3.select("div[class=padding bottom] + p").eq(i);
+                    String mBlogBody = "";
+                    //image
+                    Elements mElementImageBody = mBlogDocument3.select("div[id=ch-ls-img]").eq(i);
+                    String mBlogImage = mElementImageBody.attr("style");
+                    mBlogImage = mBlogImage.substring( mBlogImage.indexOf("https://"), mBlogImage.indexOf(")") );
+
+                    Elements mElementLinkBody = mBlogDocument3.select("div[id=ch-ls-box] > a").eq(i);
+                    String mBlogLink = mElementLinkBody.attr("href");
+
+//                    String link = "https://www.rappler.com";
+//                    String dummyIMG = "https://pbs.twimg.com/media/D4pIj4SUwAAk7CN.jpg";
+
+
+                    mBlogTitleList.add(mBlogTitle);
+                    mBlogSourceList.add(mBlogSource);
+                    mBlogUploadDateList.add(mBlogUploadDate);
+                    mBlogBodyList.add(mBlogBody);
+                    mBlogImageList.add(mBlogImage);
+                    mBlogLinkList.add(mBlogLink);
+
+                    System.out.println("LINK: " + mBlogLink);
+                }
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -166,6 +220,7 @@ public class NewsFragment extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
             NewsArticle newsarticle;
+            System.out.println("size: " + mBlogTitleList.size());
             for (int i=0;i < mBlogTitleList.size();i++){
                 newsarticle = new NewsArticle(mBlogImageList.get(i),mBlogTitleList.get(i),mBlogSourceList.get(i),mBlogUploadDateList.get(i),mBlogBodyList.get(i),mBlogLinkList.get(i),context);
                 newsArticleList.add(newsarticle);

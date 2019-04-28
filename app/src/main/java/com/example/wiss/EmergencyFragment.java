@@ -77,7 +77,7 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
         Type type = new TypeToken<List<String>>(){}.getType();
         List<String> contacts = gson.fromJson(json,type);
 
-        Log.d("TAG","FRAGMENT = " + contacts);
+        Log.d("TAG"," EMERGENCY FRAGMENT = " + contacts);
 
 
 
@@ -97,14 +97,15 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
             e.printStackTrace();
         }
 
-        assert contacts != null;
-        for (String temp : contacts) {
-            if (obj.has(temp)) {
-                try {
-                    System.out.println("in obj: "+obj.getString(temp));
-                    contactList.add(obj.getString(temp));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        if (contacts != null){
+            for (String temp : contacts) {
+                if (obj.has(temp)) {
+                    try {
+                        System.out.println("in obj: "+obj.getString(temp));
+                        contactList.add(obj.getString(temp));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -134,6 +135,8 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                 String phoneContacts=obj.toString();
                 args.putString("phoneContacts", phoneContacts);
 
+                System.out.println("contacts to pass emergency fragment: "+phoneContacts);
+
                 fragment_emergency_contacts.setArguments(args);
 
 
@@ -157,22 +160,34 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                 System.out.println("--Location saved in Emergency: " + savedLocation);
 
                 final Date currentTime = Calendar.getInstance().getTime();
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Emergency Button")
-                        .setMessage("Send SMS alert to your specified contacts?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                String messageToSend = "EMERGENCY ALERT: I'm at risk. Pls send help or assistance. My location coordinates are: "+savedLocation.get(0)+", "+savedLocation.get(1)+". Sent "+currentTime;
-//                                String messageToSend = "EMERGENCY ALERT!";
-                                System.out.println(messageToSend);
-                                for (String number : contactList){
-                                    SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
-                                    System.out.println("Sent to " + number);
-                                }
-                            }})
-                        .setNegativeButton(android.R.string.no, null).show();
+                new AlertDialog.Builder(getContext())
+                                .setTitle("Emergency Button")
+                                .setMessage("Send SMS alert to your selected contacts? Charges may apply.")
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        String messageToSend;
+                                        if (savedLocation == null){
+                                            messageToSend = "EMERGENCY ALERT: I'm at risk. Pls send help or assistance. Sent "+currentTime;
+
+                                        }else{
+                                            messageToSend = "EMERGENCY ALERT: I'm at risk. Pls send help or assistance. My location coordinates are: "+savedLocation.get(0)+", "+savedLocation.get(1)+". Sent "+currentTime;
+
+                                        }
+                                        System.out.println(messageToSend);
+                                        if (contactList.size() == 0) Toast.makeText(getActivity().getApplicationContext(), "No contacts selected yet.", Toast.LENGTH_LONG).show();
+                                        else{
+                            for (String number : contactList){
+                                SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
+                                System.out.println("Sent to " + number);
+                            }
+                            Toast.makeText(getActivity().getApplicationContext(), "Message alert sent successfully!", Toast.LENGTH_LONG).show();
+                        }
+
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
 //
 
 

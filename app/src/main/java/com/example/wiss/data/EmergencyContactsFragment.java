@@ -91,9 +91,11 @@ public class EmergencyContactsFragment extends Fragment{
                         savedContactsLocal = gson.toJson(selectedItems);
 
                         List<String> list2 = gson.fromJson(savedContactsLocal,type);
-
-                        list1.addAll(list2);
-                        String allContactsLocal = gson.toJson(list1);
+                        String allContactsLocal;
+                        if (list1 != null){
+                            list1.addAll(list2);
+                            allContactsLocal = gson.toJson(list1);
+                        }else allContactsLocal = gson.toJson(list2);
 
                         prefsEditor.putString("MyObject", allContactsLocal);
                         prefsEditor.commit();
@@ -131,44 +133,57 @@ public class EmergencyContactsFragment extends Fragment{
                 e.printStackTrace();
             }
         }
-        String[] items = list.toArray(new String[list.size()]);
+
+            String[] items = list.toArray(new String[list.size()]);
 
 //        System.out.println(Arrays.toString(items));
 
 
-        listView = (ListView) view.findViewById(R.id.contacts_listview);
+            listView = (ListView) view.findViewById(R.id.contacts_listview);
 
 
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        ArrayAdapter<String> simpleCursorAdapter = new ArrayAdapter<String>(view.getContext(),R.layout.item_contactselect,R.id.checkedtextview,items);
-        listView.setAdapter(simpleCursorAdapter);
+            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            ArrayAdapter<String> simpleCursorAdapter = new ArrayAdapter<String>(view.getContext(),R.layout.item_contactselect,R.id.checkedtextview,items);
+            listView.setAdapter(simpleCursorAdapter);
 
 
-        for (int i=0; i<list.size(); i++){
-            for (int j=0; j<list1.size(); j++) {
-                if (list.get(i).equals(list1.get(j))){
-                    System.out.println("TRUE");
-                    listView.setItemChecked(i,true);
-                    break;
+            if (list1 != null){
+                for (int i=0; i<list.size(); i++){
+                    for (int j=0; j<list1.size(); j++) {
+                        if (list.get(i).equals(list1.get(j))){
+                            System.out.println("TRUE");
+                            listView.setItemChecked(i,true);
+                            break;
+                        }
+                    }
                 }
             }
-        }
 
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedItem = ((TextView) view).getText().toString();
-                if (selectedItems.contains(selectedItem)) {
-                    selectedItems.remove(selectedItem);
-                    selectedListObj.remove(selectedItem);
-                } else if (list1.contains(selectedItem)){
-                    list1.remove(selectedItem);
-                }else{
-                    selectedItems.add(selectedItem);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String selectedItem = ((TextView) view).getText().toString();
+
+                    if (list1 != null){
+                        if (selectedItems.contains(selectedItem)) {
+                            selectedItems.remove(selectedItem);
+                            selectedListObj.remove(selectedItem);
+                        }else if (list1.contains(selectedItem)) list1.remove(selectedItem);
+                        else  selectedItems.add(selectedItem);
+
+                    }
+
+
+                    if (list1 == null){
+                        if (selectedItems.contains(selectedItem)) {
+                            selectedItems.remove(selectedItem);
+                            selectedListObj.remove(selectedItem);
+                        } else  selectedItems.add(selectedItem);
+                    }
                 }
-            }
-        });
+            });
+
 
 
         return view;

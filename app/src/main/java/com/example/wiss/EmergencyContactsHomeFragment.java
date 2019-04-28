@@ -88,34 +88,36 @@ public class EmergencyContactsHomeFragment extends Fragment {
             }
         });
 
-        String[] items = contacts.toArray(new String[contacts.size()]);
+        if (contacts != null){
+            String[] items = contacts.toArray(new String[contacts.size()]);
 
-        ListView listView = (ListView) view.findViewById(R.id.listview_favcontacts);
+            ListView listView = (ListView) view.findViewById(R.id.listview_favcontacts);
 //        ArrayAdapter<String> simpleCursorAdapter = new ArrayAdapter<String>(view.getContext(),R.layout.item_contactdisplay,R.id.displaytextview,items);
-        ArrayAdapter<String> simpleCursorAdapter = new ArrayAdapter<String>(view.getContext(),R.layout.item_contactdisplay,R.id.displaytextview,items){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent){
-                // Cast the list view each item as text view
-                TextView item = (TextView) super.getView(position,convertView,parent);
+            ArrayAdapter<String> simpleCursorAdapter = new ArrayAdapter<String>(view.getContext(),R.layout.item_contactdisplay,R.id.displaytextview,items){
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent){
+                    // Cast the list view each item as text view
+                    TextView item = (TextView) super.getView(position,convertView,parent);
 
 
-                // Change the item text size
-                item.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16);
+                    // Change the item text size
+                    item.setTextSize(TypedValue.COMPLEX_UNIT_DIP,16);
 
-                // return the view
-                return item;
-            }
-        };
+                    // return the view
+                    return item;
+                }
+            };
 
-        listView.setAdapter(simpleCursorAdapter);
+            listView.setAdapter(simpleCursorAdapter);
 
 
-        for (String temp : contacts) {
-            if (obj.has(temp)) {
-                try {
-                    System.out.println("in obj home: "+obj.getString(temp));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            for (String temp : contacts) {
+                if (obj.has(temp)) {
+                    try {
+                        System.out.println("in obj home: "+obj.getString(temp));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

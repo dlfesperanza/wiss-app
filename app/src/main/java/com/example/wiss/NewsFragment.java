@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wiss.data.NewsArticle;
+import com.example.wiss.data.WeatherFunction;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -44,6 +47,7 @@ public class NewsFragment extends Fragment {
     private ArrayList<String> mBlogLinkList = new ArrayList<>();
     private ArrayList<String> mBlogImageList = new ArrayList<>();
     public Context context;
+    ProgressBar loader;
 
     @Nullable
     @Override
@@ -59,6 +63,7 @@ public class NewsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_news, null);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        loader = (ProgressBar) view.findViewById(R.id.loader_news);
 
         mAdapter = new NewsArticleAdapter(newsArticleList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -68,7 +73,13 @@ public class NewsFragment extends Fragment {
 
         context = getContext();
 
-        new Description().execute();
+        if (WeatherFunction.isNetworkAvailable(getActivity().getApplicationContext())) {
+            new Description().execute();
+        } else {
+            loader.setVisibility(View.VISIBLE);
+            Toast.makeText(getActivity().getApplicationContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
+        }
+
 
 
 
@@ -82,11 +93,12 @@ public class NewsFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressDialog = new ProgressDialog(getContext());
-//            mProgressDialog.setTitle("Android Basic JSoup Tutorial");
-            mProgressDialog.setMessage("Loading...");
-            mProgressDialog.setIndeterminate(false);
-            mProgressDialog.show();
+//            mProgressDialog = new ProgressDialog(getContext());
+////            mProgressDialog.setTitle("Android Basic JSoup Tutorial");
+//            mProgressDialog.setMessage("Loading...");
+//            mProgressDialog.setIndeterminate(false);
+//            mProgressDialog.show();
+//            loader.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -238,7 +250,8 @@ public class NewsFragment extends Fragment {
 //            mRecyclerView.setAdapter(mDataAdapter);
 
             mAdapter.notifyDataSetChanged();
-            mProgressDialog.dismiss();
+//            mProgressDialog.dismiss();
+            loader.setVisibility(View.GONE);
 
         }
     }

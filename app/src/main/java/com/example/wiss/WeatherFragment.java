@@ -62,7 +62,7 @@ public class WeatherFragment extends Fragment implements LocationListener{
     TextView selectCity, cityField, detailsField, currentTemperatureField, humidity_field, pressure_field, weatherIcon, updatedField, day1, day2, day3, day4, day5, day1_icon, day2_icon, day3_icon, day4_icon, day5_icon, day1_temp, day2_temp, day3_temp, day4_temp, day5_temp;
     ProgressBar loader;
     Typeface weatherFont;
-    String city;
+    String city = "Rodriguez, PH";
     /* Please Put your API KEY here */
     String OPEN_WEATHER_MAP_API = "1a8b15bb29c60aa92524f6939e91b100";
     /* Please Put your API KEY here */
@@ -122,31 +122,33 @@ public class WeatherFragment extends Fragment implements LocationListener{
         day5_temp = (TextView) view.findViewById(R.id.day5_temp);
 
 
-        taskLoadUp(city);
+
 
         locationManager = (LocationManager)  getActivity().getSystemService(Context.LOCATION_SERVICE);
         criteria = new Criteria();
         bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
 
-
-        try{
-            Location location = locationManager.getLastKnownLocation(bestProvider);
-            if (location != null) {
-                Log.e("TAG", "GPS is on");
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+        if (city == null) {
+            try {
+                Location location = locationManager.getLastKnownLocation(bestProvider);
+                if (location != null) {
+                    Log.e("TAG", "GPS is on");
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+                } else {
+                    //This is what you need:
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+                    //                locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
+                    System.out.println("NULL BRO--------------");
+                }
+            } catch (SecurityException e) {
+                e.printStackTrace();
             }
-            else{
-                //This is what you need:
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-//                locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
-                System.out.println("NULL BRO--------------");
-            }
-        }catch(SecurityException e){
-            e.printStackTrace();
         }
+
+        taskLoadUp(city);
 
 
 
@@ -216,13 +218,14 @@ public class WeatherFragment extends Fragment implements LocationListener{
             String xml = "";
 
 
-            while (latitude == null && longitude == null){
-                latitude = getLatitude();
-                longitude = getLongitude();
-                System.out.println("IN BACKGROUND: " + latitude + ". " + longitude);
-            }
+
 
             if (city==null){
+                while (latitude == null && longitude == null){
+                    latitude = getLatitude();
+                    longitude = getLongitude();
+                    System.out.println("IN BACKGROUND: " + latitude + ". " + longitude);
+                }
                 xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/forecast?lat="+latitude+"&lon="+longitude+"&appid=" + OPEN_WEATHER_MAP_API);
             }else{
                 xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/forecast?q=" + args[0] + "&units=metric&appid=" + OPEN_WEATHER_MAP_API);

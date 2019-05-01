@@ -76,7 +76,6 @@ public class NewsFragment extends Fragment {
         if (WeatherFunction.isNetworkAvailable(getActivity().getApplicationContext())) {
             new Description().execute();
         } else {
-            loader.setVisibility(View.VISIBLE);
             Toast.makeText(getActivity().getApplicationContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
         }
 

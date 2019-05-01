@@ -173,7 +173,7 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                                             messageToSend = "EMERGENCY ALERT: I'm at risk. Pls send help or assistance. Sent "+currentTime;
 
                                         }else{
-                                            messageToSend = "EMERGENCY ALERT: I'm at risk. Pls send help or assistance. My location coordinates are: "+savedLocation.get(0)+", "+savedLocation.get(1)+". Sent "+currentTime;
+                                            messageToSend = "EMERGENCY ALERT: I'm at risk. Pls send help or assistance. My location is: http://maps.google.com/maps?q=loc:"+savedLocation.get(0)+","+savedLocation.get(1)+" Sent "+currentTime;
 
                                         }
                                         System.out.println(messageToSend);

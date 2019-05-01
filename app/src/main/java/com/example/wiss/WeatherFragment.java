@@ -59,10 +59,11 @@ public class WeatherFragment extends Fragment implements LocationListener{
     // Project Created by Ferdousur Rahman Shajib
     // www.androstock.com
 
-    TextView selectCity, cityField, detailsField, currentTemperatureField, humidity_field, pressure_field, weatherIcon, updatedField, day1, day2, day3, day4, day5, day1_icon, day2_icon, day3_icon, day4_icon, day5_icon, day1_temp, day2_temp, day3_temp, day4_temp, day5_temp;
+    TextView selectCity, getLocation, cityField, detailsField, currentTemperatureField, humidity_field, pressure_field, weatherIcon, updatedField, day1, day2, day3, day4, day5, day1_icon, day2_icon, day3_icon, day4_icon, day5_icon, day1_temp, day2_temp, day3_temp, day4_temp, day5_temp;
     ProgressBar loader;
     Typeface weatherFont;
-    String city = "Rodriguez, PH";
+    String city = "Manila, PH";
+//    String city;
     /* Please Put your API KEY here */
     String OPEN_WEATHER_MAP_API = "1a8b15bb29c60aa92524f6939e91b100";
     /* Please Put your API KEY here */
@@ -76,6 +77,7 @@ public class WeatherFragment extends Fragment implements LocationListener{
     SharedPreferences appSharedPrefs;
     Gson gson = new Gson();
     SharedPreferences.Editor prefsEditor;
+    LocationListener locListener;
 
     //    @Nullable
     @Override
@@ -84,9 +86,11 @@ public class WeatherFragment extends Fragment implements LocationListener{
 //        getSupportActionBar().hide();
 //        setContentView(R.layout.activity_main);
         View view = inflater.inflate(R.layout.fragment_weather, null);
+        locListener = this;
 
         loader = (ProgressBar) view.findViewById(R.id.loader);
         selectCity = (TextView) view.findViewById(R.id.selectCity);
+        getLocation = (TextView) view.findViewById(R.id.getLocation);
         cityField = (TextView) view.findViewById(R.id.city_field);
         updatedField = (TextView) view.findViewById(R.id.updated_field);
         detailsField = (TextView) view.findViewById(R.id.details_field);
@@ -128,25 +132,25 @@ public class WeatherFragment extends Fragment implements LocationListener{
         criteria = new Criteria();
         bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
 
-        if (city == null) {
-            try {
-                Location location = locationManager.getLastKnownLocation(bestProvider);
-                if (location != null) {
-                    Log.e("TAG", "GPS is on");
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                    Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
-                } else {
-                    //This is what you need:
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-                    //                locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
-                    System.out.println("NULL BRO--------------");
-                }
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (city == null) {
+//            try {
+//                Location location = locationManager.getLastKnownLocation(bestProvider);
+//                if (location != null) {
+//                    Log.e("TAG", "GPS is on");
+//                    latitude = location.getLatitude();
+//                    longitude = location.getLongitude();
+//                    Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+//                } else {
+//                    //This is what you need:
+//                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+//                    //                locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
+//                    System.out.println("NULL BRO--------------");
+//                }
+//            } catch (SecurityException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         taskLoadUp(city);
 
@@ -182,6 +186,44 @@ public class WeatherFragment extends Fragment implements LocationListener{
                 alertDialog.show();
             }
         });
+//        getLocation.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+
+
+//                try {
+//                    Location location = locationManager.getLastKnownLocation(bestProvider);
+//                    if (location != null) {
+//                        Log.e("TAG", "GPS is on");
+//                        latitude = location.getLatitude();
+//                        longitude = location.getLongitude();
+//                        Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        //This is what you need:
+////                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+//                        //                locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
+//                        locationManager.removeUpdates(locListener);
+//                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+//                            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
+//                            System.out.println("NULL BRO--------------");
+//                        loader.setVisibility(View.VISIBLE);
+//
+//                    }
+//                } catch (SecurityException e) {
+//                    e.printStackTrace();
+//                }
+//                loader.setVisibility(View.GONE);
+
+//                LocationGetter userLocation = new LocationGetter();
+//                boolean locationEnabled = userLocation.getLocation(getContext(), userLocation.locationResult);
+//
+//                if (!locationEnabled) {
+//                    // message to user to indicate to enable location on his device ...
+//                    System.out.println("enable gps siz");
+//                }
+
+//            }
+//        });
 
 
         //just change the fragment_dashboard
@@ -257,6 +299,7 @@ public class WeatherFragment extends Fragment implements LocationListener{
 
 
                     selectCity.setText("Change City");
+//                    getLocation.setText("Get Location");
                     cityField.setText(json.getJSONObject("city").getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("city").getString("country"));
                     detailsField.setText(details.getString("description").toUpperCase(Locale.US));
                     currentTemperatureField.setText(String.format("%.2f", main.getDouble("temp")) + "°");
@@ -313,9 +356,6 @@ public class WeatherFragment extends Fragment implements LocationListener{
                 .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
         prefsEditor = appSharedPrefs.edit();
 
-//        String json = appSharedPrefs.getString("MyLocation", "");
-//        Type type = new TypeToken<List<String>>(){}.getType();
-
         List<String> locList = new ArrayList<>();
 
         locList.add(longitude.toString());
@@ -324,6 +364,7 @@ public class WeatherFragment extends Fragment implements LocationListener{
 
         prefsEditor.putString("MyLocation", savedLocation);
         prefsEditor.commit();
+        loader.setVisibility(View.GONE);
 
     }
 

@@ -17,6 +17,11 @@ import android.widget.TextView;
 import com.example.wiss.data.NewsArticle;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static androidx.core.content.ContextCompat.startActivity;
@@ -66,6 +71,8 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleAdapter.
 
     public NewsArticleAdapter(List<NewsArticle> newsArticleList) {
         this.newsArticleList = newsArticleList;
+
+
     }
 
     @Override
@@ -80,18 +87,22 @@ public class NewsArticleAdapter extends RecyclerView.Adapter<NewsArticleAdapter.
     public void onBindViewHolder(MyViewHolder holder, int position) {
         article = newsArticleList.get(position);
         holder.title.setText(article.getTitle());
-        holder.date.setText(article.getDate());
+        DateFormat dateFormatRev = new SimpleDateFormat("yyyy-MM-dd");
+        String strDate = dateFormatRev.format(article.getDate());
+        holder.date.setText(strDate);
         holder.source.setText(article.getSource());
 
         context = article.getContext();
         link = "https://news.abs-cbn.com";
         link = link.concat(article.getLink());
-        System.out.println("LINK-- " + link);
+//        System.out.println("LINK-- " + link);
         holder.body.setText(article.getBody());
         holder.linkButton.setTag(position);
 
         Picasso.get()
                 .load(article.getImage())
+                .fit()
+                .centerCrop()
                 .into(holder.imageview);
 
     }

@@ -164,7 +164,6 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                 new AlertDialog.Builder(getContext())
                                 .setTitle("Emergency Button")
                                 .setMessage("Send SMS alert to your selected contacts? Charges may apply.")
-                                .setIcon(android.R.drawable.ic_dialog_alert)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                                     public void onClick(DialogInterface dialog, int whichButton) {

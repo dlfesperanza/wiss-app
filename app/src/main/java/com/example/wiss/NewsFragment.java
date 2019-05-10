@@ -100,7 +100,8 @@ public class NewsFragment extends Fragment {
         sort_choice = "";
         init();
 
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        final Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle("News");
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
 
@@ -109,24 +110,27 @@ public class NewsFragment extends Fragment {
 
                 if(item.getItemId()==R.id.item1)
                 {
-                    Toast.makeText(getActivity(), "ABS-CBN", Toast.LENGTH_SHORT).show();
                     sort_choice = "ABS-CBN";
 //                    init();
                     sortSource(sort_choice);
+                    toolbar.setTitle("News");
+                    toolbar.setSubtitle(sort_choice);
                 }
                 else if(item.getItemId()== R.id.item2)
                 {
-                    Toast.makeText(getActivity(), "RAPPLER", Toast.LENGTH_SHORT).show();
                     sort_choice = "RAPPLER";
 //                    init();
                     sortSource(sort_choice);
+                    toolbar.setTitle("News");
+                    toolbar.setSubtitle(sort_choice);
                 }
                 else if(item.getItemId()== R.id.item3)
                 {
-                    Toast.makeText(getActivity(), "INQUIRER", Toast.LENGTH_SHORT).show();
                     sort_choice = "INQUIRER";
 //                    init();
                     sortSource(sort_choice);
+                    toolbar.setTitle("News");
+                    toolbar.setSubtitle(sort_choice);
                 }
 
                 return false;
@@ -277,7 +281,6 @@ public class NewsFragment extends Fragment {
                         DateFormat dateFormatRev = new SimpleDateFormat("yyyy-MM-dd");
                         String strDate = dateFormatRev.format(dateFormat);
 
-                        System.out.println(dateFormat);
                         //body
                         Elements mElementBlogBody = mBlogDocument2.select("div[class=padding bottom] + p").eq(i);
                         String mBlogBody = mElementBlogBody.text();
@@ -363,7 +366,6 @@ public class NewsFragment extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
             NewsArticle newsarticle;
-            System.out.println("size: " + mBlogImageList.size());
             for (int i=0;i < mBlogImageList.size();i++){
 //                newsarticle = new NewsArticle(mBlogImageListSorted.get(i),mBlogTitleListSorted.get(i),mBlogSourceListSorted.get(i),mBlogUploadDateListSorted.get(i),mBlogBodyListSorted.get(i),mBlogLinkListSorted.get(i),context);
                 newsarticle = new NewsArticle(mBlogImageList.get(i),mBlogTitleList.get(i),mBlogSourceList.get(i),mBlogUploadDateList.get(i),mBlogBodyList.get(i),mBlogLinkList.get(i),context);

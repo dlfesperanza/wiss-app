@@ -62,8 +62,9 @@ public class WeatherFragment extends Fragment implements LocationListener{
     TextView selectCity, getLocation, cityField, detailsField, currentTemperatureField, humidity_field, pressure_field, weatherIcon, updatedField, day1, day2, day3, day4, day5, day1_icon, day2_icon, day3_icon, day4_icon, day5_icon, day1_temp, day2_temp, day3_temp, day4_temp, day5_temp;
     ProgressBar loader;
     Typeface weatherFont;
-    String city = "Manila, PH";
-//    String city;
+//    String city = "Manila, PH";
+    String savedCity;
+    String city;
     /* Please Put your API KEY here */
     String OPEN_WEATHER_MAP_API = "1a8b15bb29c60aa92524f6939e91b100";
     /* Please Put your API KEY here */
@@ -126,7 +127,7 @@ public class WeatherFragment extends Fragment implements LocationListener{
         day5_temp = (TextView) view.findViewById(R.id.day5_temp);
 
 
-
+        city = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedCity", "Manila, PH");
 
         locationManager = (LocationManager)  getActivity().getSystemService(Context.LOCATION_SERVICE);
         criteria = new Criteria();
@@ -164,16 +165,20 @@ public class WeatherFragment extends Fragment implements LocationListener{
                 loader.setVisibility(View.GONE);
                 final EditText input = new EditText(getContext());
                 input.setText(city);
+
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
                 input.setLayoutParams(lp);
+
                 alertDialog.setView(input);
 
                 alertDialog.setPositiveButton("Change",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 city = input.getText().toString();
+                                savedCity = city;
+                                PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("savedCity", city).apply();
                                 taskLoadUp(city);
                             }
                         });

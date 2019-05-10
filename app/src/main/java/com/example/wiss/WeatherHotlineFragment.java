@@ -30,6 +30,10 @@ public class WeatherHotlineFragment extends Fragment implements View.OnClickList
         ((Button) view.findViewById(R.id.button_prc4)).setOnClickListener(this);
         ((Button) view.findViewById(R.id.button_prc5)).setOnClickListener(this);
         ((Button) view.findViewById(R.id.button_prc6)).setOnClickListener(this);
+        ((Button) view.findViewById(R.id.button_mmda1)).setOnClickListener(this);
+        ((Button) view.findViewById(R.id.button_mmda2)).setOnClickListener(this);
+        ((Button) view.findViewById(R.id.button_mmda3)).setOnClickListener(this);
+        ((Button) view.findViewById(R.id.button_mmda4)).setOnClickListener(this);
 
 
 

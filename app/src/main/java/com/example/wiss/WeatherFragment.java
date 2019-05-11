@@ -175,44 +175,7 @@ public class WeatherFragment extends Fragment{
                 alertDialog.show();
             }
         });
-//        getLocation.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-
-
-//                try {
-//                    Location location = locationManager.getLastKnownLocation(bestProvider);
-//                    if (location != null) {
-//                        Log.e("TAG", "GPS is on");
-//                        latitude = location.getLatitude();
-//                        longitude = location.getLongitude();
-//                        Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        //This is what you need:
-////                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
-//                        //                locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
-//                        locationManager.removeUpdates(locListener);
-//                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
-//                            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
-//                            System.out.println("NULL BRO--------------");
-//                        loader.setVisibility(View.VISIBLE);
 //
-//                    }
-//                } catch (SecurityException e) {
-//                    e.printStackTrace();
-//                }
-//                loader.setVisibility(View.GONE);
-
-//                LocationGetter userLocation = new LocationGetter();
-//                boolean locationEnabled = userLocation.getLocation(getContext(), userLocation.locationResult);
-//
-//                if (!locationEnabled) {
-//                    // message to user to indicate to enable location on his device ...
-//                    System.out.println("enable gps siz");
-//                }
-
-//            }
-//        });
 
 
         //just change the fragment_dashboard
@@ -286,12 +249,16 @@ public class WeatherFragment extends Fragment{
                     JSONObject dayfour = json.getJSONArray("list").getJSONObject(27);
                     JSONObject dayfive = json.getJSONArray("list").getJSONObject(35);
 
+                    Double subVal;
+                    if ( main.getDouble("temp") > 100){
+                        subVal = 273.15;
+                    }else subVal = 0.0;
 
                     selectCity.setText("Change City");
 //                    getLocation.setText("Get Location");
                     cityField.setText(json.getJSONObject("city").getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("city").getString("country"));
                     detailsField.setText(details.getString("description").toUpperCase(Locale.US));
-                    currentTemperatureField.setText(String.format("%.2f", main.getDouble("temp")) + "°");
+                    currentTemperatureField.setText(String.format("%.2f", main.getDouble("temp")-subVal) + "°");
                     humidity_field.setText("Humidity: " + main.getString("humidity") + "%");
                     pressure_field.setText("Pressure: " + main.getString("pressure") + " hPa");
                     updatedField.setText(df.format(new Date(json.getJSONArray("list").getJSONObject(0).getLong("dt") * 1000)));
@@ -309,15 +276,15 @@ public class WeatherFragment extends Fragment{
                     day4_icon.setText(Html.fromHtml(WeatherFunction.setWeatherIcon(dayfour.getJSONArray("weather").getJSONObject(0).getInt("id"))));
                     day5_icon.setText(Html.fromHtml(WeatherFunction.setWeatherIcon(dayfive.getJSONArray("weather").getJSONObject(0).getInt("id"))));
 
-                    day1_temp.setText(String.format("%.2f", dayone.getJSONObject("main").getDouble("temp")) + "°");
-                    day2_temp.setText(String.format("%.2f", daytwo.getJSONObject("main").getDouble("temp")) + "°");
-                    day3_temp.setText(String.format("%.2f", daythree.getJSONObject("main").getDouble("temp")) + "°");
-                    day4_temp.setText(String.format("%.2f", dayfour.getJSONObject("main").getDouble("temp")) + "°");
-                    day5_temp.setText(String.format("%.2f", dayfive.getJSONObject("main").getDouble("temp")) + "°");
+                    day1_temp.setText(String.format("%.2f", dayone.getJSONObject("main").getDouble("temp")-subVal) + "°");
+                    day2_temp.setText(String.format("%.2f", daytwo.getJSONObject("main").getDouble("temp")-subVal) + "°");
+                    day3_temp.setText(String.format("%.2f", daythree.getJSONObject("main").getDouble("temp")-subVal) + "°");
+                    day4_temp.setText(String.format("%.2f", dayfour.getJSONObject("main").getDouble("temp")-subVal) + "°");
+                    day5_temp.setText(String.format("%.2f", dayfive.getJSONObject("main").getDouble("temp")-subVal) + "°");
 
                     loader.setVisibility(View.GONE);
 
-//                    -273.15
+//
 
                 }
             } catch (JSONException e) {

@@ -17,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +60,7 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
     SharedPreferences.Editor prefsEditor;
     String savedContactsLocal;
     Type type;
+    String name;
 //    JSONObject selectedListObj = new JSONObject();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,6 +81,36 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
         List<String> contacts = gson.fromJson(json,type);
 
         Log.d("TAG"," EMERGENCY FRAGMENT = " + contacts);
+
+        String savedName = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedName", "");
+        if (savedName.equals("")){
+            android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("Name");
+            final EditText input = new EditText(getContext());
+
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            input.setLayoutParams(lp);
+
+            alertDialog.setView(input);
+
+            alertDialog.setPositiveButton("Save",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            String name = input.getText().toString();
+                            setName(name);
+                            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("savedName", name).apply();
+                        }
+                    });
+            alertDialog.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            alertDialog.show();
+        }else setName(savedName);
 
 
 
@@ -167,23 +200,29 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                                     public void onClick(DialogInterface dialog, int whichButton) {
-                                        String messageToSend;
-                                        if (savedLocation == null){
-                                            messageToSend = "EMERGENCY ALERT: I'm at risk. Pls send help or assistance. Sent "+currentTime;
 
-                                        }else{
-                                            messageToSend = "EMERGENCY ALERT: I'm at risk. Pls send help or assistance. My location is: http://maps.google.com/maps?q=loc:"+savedLocation.get(0)+","+savedLocation.get(1)+" Sent "+currentTime;
-
-                                        }
-                                        System.out.println(messageToSend);
                                         if (contactList.size() == 0) Toast.makeText(getActivity().getApplicationContext(), "No contacts selected yet.", Toast.LENGTH_LONG).show();
                                         else{
-                            for (String number : contactList){
-                                SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
-                                System.out.println("Sent to " + number);
-                            }
-                            Toast.makeText(getActivity().getApplicationContext(), "Message alert sent successfully!", Toast.LENGTH_LONG).show();
-                        }
+                                            System.out.println("*****SAVED NAME: " + getName());
+
+                                            String messageToSend;
+                                            if (savedLocation == null){
+                                                messageToSend = "EMERGENCY ALERT: Pls send help. Sent "+currentTime + " by "+getName();
+
+                                            }else{
+                                                messageToSend = "EMERGENCY ALERT: Pls send help at http://maps.google.com/maps?q=loc:"+savedLocation.get(1)+","+savedLocation.get(0)+". Sent "+currentTime + " by "+getName();
+
+                                            }
+                                            System.out.println(messageToSend);
+
+                                            for (String number : contactList){
+                                                SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
+                                                System.out.println("Sent to " + number);
+                                            }
+
+                                            Toast.makeText(getActivity().getApplicationContext(), "Sending messages...", Toast.LENGTH_LONG).show();
+
+                                        }
 
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
@@ -192,5 +231,13 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
 
                 break;
         }
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 }

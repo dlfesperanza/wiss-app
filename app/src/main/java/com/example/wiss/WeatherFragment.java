@@ -55,7 +55,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class WeatherFragment extends Fragment implements LocationListener{
+public class WeatherFragment extends Fragment{
     // Project Created by Ferdousur Rahman Shajib
     // www.androstock.com
 
@@ -71,14 +71,12 @@ public class WeatherFragment extends Fragment implements LocationListener{
     LocationManager locationMn;
     public Double latitude;
     public Double longitude;
-    public LocationManager locationManager;
-    public Criteria criteria;
-    public String bestProvider;
     List<String> list1;
     SharedPreferences appSharedPrefs;
     Gson gson = new Gson();
     SharedPreferences.Editor prefsEditor;
     LocationListener locListener;
+    List<Double> savedLoc;
 
     //    @Nullable
     @Override
@@ -87,7 +85,6 @@ public class WeatherFragment extends Fragment implements LocationListener{
 //        getSupportActionBar().hide();
 //        setContentView(R.layout.activity_main);
         View view = inflater.inflate(R.layout.fragment_weather, null);
-        locListener = this;
 
         loader = (ProgressBar) view.findViewById(R.id.loader);
         selectCity = (TextView) view.findViewById(R.id.selectCity);
@@ -127,31 +124,18 @@ public class WeatherFragment extends Fragment implements LocationListener{
         day5_temp = (TextView) view.findViewById(R.id.day5_temp);
 
 
-        city = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedCity", "Manila, PH");
+//        city = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedCity", "Manila, PH");
 
-        locationManager = (LocationManager)  getActivity().getSystemService(Context.LOCATION_SERVICE);
-        criteria = new Criteria();
-        bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
+        Gson gson = new Gson();
+        String json = appSharedPrefs.getString("MyLocation", "");
+        Type type = new TypeToken<List<Double>>(){}.getType();
+        savedLoc = gson.fromJson(json,type);
 
-//        if (city == null) {
-//            try {
-//                Location location = locationManager.getLastKnownLocation(bestProvider);
-//                if (location != null) {
-//                    Log.e("TAG", "GPS is on");
-//                    latitude = location.getLatitude();
-//                    longitude = location.getLongitude();
-//                    Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
-//                } else {
-//                    //This is what you need:
-//                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-//                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-//                    //                locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
-//                    System.out.println("NULL BRO--------------");
-//                }
-//            } catch (SecurityException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        Log.d("TAG","LOCATION = " + savedLoc);
+
+
 
         taskLoadUp(city);
 
@@ -178,7 +162,7 @@ public class WeatherFragment extends Fragment implements LocationListener{
                             public void onClick(DialogInterface dialog, int which) {
                                 city = input.getText().toString();
                                 savedCity = city;
-                                PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("savedCity", city).apply();
+//                                PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("savedCity", city).apply();
                                 taskLoadUp(city);
                             }
                         });
@@ -262,17 +246,17 @@ public class WeatherFragment extends Fragment implements LocationListener{
             latitude = getLatitude();
             longitude = getLongitude();
 
-            String xml = "";
+            String xml;
 
 
 
 
             if (city==null){
-                while (latitude == null && longitude == null){
-                    latitude = getLatitude();
-                    longitude = getLongitude();
-                    System.out.println("IN BACKGROUND: " + latitude + ". " + longitude);
-                }
+//                while (latitude == null && longitude == null){
+//                    latitude = getLatitude();
+//                    longitude = getLongitude();
+//                    System.out.println("IN BACKGROUND: " + latitude + ". " + longitude);
+//                }
                 xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/forecast?lat="+latitude+"&lon="+longitude+"&appid=" + OPEN_WEATHER_MAP_API);
             }else{
                 xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/forecast?q=" + args[0] + "&units=metric&appid=" + OPEN_WEATHER_MAP_API);
@@ -342,58 +326,15 @@ public class WeatherFragment extends Fragment implements LocationListener{
 
         }
     }
-    @Override
-    public void onLocationChanged(Location location) {
-        //Hey, a non null location! Sweet!
 
-        //remove location callback:
-        locationManager.removeUpdates(this);
-
-        //open the map:
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-//        Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
-        System.out.println("latitude:" + latitude + " longitude:" + longitude);
-//        latitude =  new Double(35);
-//        longitude = new Double(139);
-
-        appSharedPrefs = PreferenceManager
-                .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
-        prefsEditor = appSharedPrefs.edit();
-
-        List<String> locList = new ArrayList<>();
-
-        locList.add(longitude.toString());
-        locList.add(latitude.toString());
-        String savedLocation = gson.toJson(locList);
-
-        prefsEditor.putString("MyLocation", savedLocation);
-        prefsEditor.commit();
-        loader.setVisibility(View.GONE);
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
 
     Double getLatitude(){
-        return this.latitude;
+        return this.savedLoc.get(1);
     }
 
     Double getLongitude(){
-        return this.longitude;
+        return this.savedLoc.get(0);
     }
+
 
 }

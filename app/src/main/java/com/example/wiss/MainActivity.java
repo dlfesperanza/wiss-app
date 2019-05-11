@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
@@ -21,8 +23,14 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 //import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -30,6 +38,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -44,7 +53,10 @@ import io.fabric.sdk.android.Fabric;
 import android.net.Uri;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
 
@@ -53,14 +65,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     final int MY_PERMISSIONS_REQUEST_COARSE_LOCATION = 102;
     final int MY_PERMISSIONS_REQUEST_SEND_SMS = 103;
 
-    private GoogleApiClient mGoogleApiClient;
-    public static final String TAG = "TAG";
-    FusedLocationProviderClient mFusedLocationClient;
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private LocationRequest mLocationRequest;
-    private LocationCallback locationCallback;
+    private FusedLocationProviderClient fusedLocationClient;
+    LocationRequest locationRequest;
+    Location mCurrentLocation;
+    LocationCallback locationCallback;
+    SharedPreferences appSharedPrefs;
+    SharedPreferences.Editor prefsEditor;
 
     Activity thisActivity = this;
+
+    Gson gson = new Gson();
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -91,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+//        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         checkForPermissions("CONTACTS");
@@ -104,35 +118,127 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         toolbar.setTitle("News");
 
 
-        initializeViews();
+//        initializeViews();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        try{
+            fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            Log.i("TAG", "***** LOCATION NULL");
+                            mCurrentLocation = location;
+                        }
+                    }
+                });
+        }catch (SecurityException e) {
+            e.printStackTrace();
+        }
 
-        // Create the LocationRequest object
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+        createLocationRequest();
 
-        locationCallback =new LocationCallback(){
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+
+        SettingsClient client = LocationServices.getSettingsClient(this);
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                // All location settings are satisfied. The client can initialize
+                // location requests here.
+                // ...
+            }
+        });
+
+        task.addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (e instanceof ResolvableApiException) {
+                    // Location settings are not satisfied, but this can be fixed
+                    // by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                        resolvable.startResolutionForResult(MainActivity.this, 0); //== 2nd argument
+                    } catch (IntentSender.SendIntentException sendEx) {
+                        // Ignore the error.
+                    }
+                }
+            }
+        });
+
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    Log.i("TAG", "***** LOCATION CALLBACK NULL");
+                    return;
+                }
                 for (Location location : locationResult.getLocations()) {
-                    Log.i("MainActivity ", "" + location.getLongitude());
-                    //not getting current location updates every 2 minutes
+                    // Update UI with location data
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+//        Toast.makeText(getContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+                    System.out.println("latitude:" + latitude + " longitude:" + longitude);
+
+                    appSharedPrefs = PreferenceManager
+                            .getDefaultSharedPreferences(getApplicationContext());
+                    prefsEditor = appSharedPrefs.edit();
+
+                    List<Double> locList = new ArrayList<>();
+
+                    locList.add(longitude);
+                    locList.add(latitude);
+                    String savedLocation = gson.toJson(locList);
+
+                    prefsEditor.putString("MyLocation", savedLocation);
+                    prefsEditor.commit();
                 }
             };
-
         };
 
 
 
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    private void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        if (requestingLocationUpdates) {
+            startLocationUpdates();
+//        }
+    }
+
+    private void startLocationUpdates() {
+        try{
+            fusedLocationClient.requestLocationUpdates(locationRequest,
+                    locationCallback,
+                    null /* Looper */);
+        }catch (SecurityException e){
+            e.printStackTrace();
+        }
+    }
+
+    protected void createLocationRequest() {
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     private void checkForPermissions(String perm) {
@@ -166,6 +272,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         MY_PERMISSIONS_REQUEST_COARSE_LOCATION);
+            } else {
+                initializeViews();
+            }
+
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             } else {
                 initializeViews();
             }
@@ -258,79 +375,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.i(TAG, "Location services connected.");
-        try{
-//            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations, this can be null.
-                            if (location == null) {
-                                Log.i(TAG,"location is null");
-//                                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-//                                mFusedLocationClient.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                                mFusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback, null);
-                            }
-                            else {
-                                Log.i(TAG,"location is not null");
-                                handleNewLocation(location);
-                            };
-                        }
-                    });
-        }catch (SecurityException e){}
-    }
 
-    private void handleNewLocation(Location location) {
-        Log.i(TAG,"in handle new location");
-        Log.d(TAG, location.toString());
-
-        double currentLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-
-
-
-        System.out.println("=======" +currentLatitude + ", " + currentLongitude + "========");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Location services suspended. Please reconnect.");
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Log.i(TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        setUpMapIfNeeded();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
-    }
 }

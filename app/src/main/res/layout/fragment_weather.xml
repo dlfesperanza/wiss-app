@@ -45,22 +45,12 @@
         android:textColor="@color/colorText"
         android:textSize="18sp"
         android:textStyle="italic" />
-    <!--android:text="@string/weather_changecity"-->
 
-
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_below="@id/spaceWeather"-->
-        <!--android:layout_margin="20dp"-->
-        <!--android:id="@+id/layoutWeather"-->
-        >
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/getLocation"
-        android:layout_margin="20dp"
+        android:layout_margin="12dp"
         android:stretchColumns="*"
         android:layout_centerInParent="true"
         android:id="@+id/layoutWeather">
@@ -136,9 +126,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/pressure_field"
-        android:layout_margin="30dp"
-        android:stretchColumns="*"
-        android:layout_centerInParent="true">
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:stretchColumns="*">
 
 
         <TableRow
@@ -149,48 +143,47 @@
                 android:id="@+id/day1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="18sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
-
+                android:textStyle="italic" />
 
 
             <TextView
                 android:id="@+id/day2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="18sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="18sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="18sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="18sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
         </TableRow>
 
@@ -203,46 +196,46 @@
                 android:id="@+id/day1_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="25sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day2_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="25sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day3_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="25sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day4_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="25sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day5_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="25sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
         </TableRow>
 
@@ -255,46 +248,46 @@
                 android:id="@+id/day1_temp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="12sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day2_temp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="12sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day3_temp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="12sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day4_temp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="12sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/day5_temp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="12sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:textStyle="italic" />
 
         </TableRow>
     </TableLayout>

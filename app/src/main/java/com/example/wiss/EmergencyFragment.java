@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.telephony.SmsManager;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,8 +86,11 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
         String savedName = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedName", "");
         if (savedName.equals("")){
             android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getActivity());
-            alertDialog.setTitle("Name");
+            alertDialog.setTitle("Input Name");
             final EditText input = new EditText(getContext());
+            int maxLength = 25;
+            input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+
 
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -196,7 +200,7 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
 
                 new AlertDialog.Builder(getContext())
                                 .setTitle("Emergency Button")
-                                .setMessage("Send SMS alert to your selected contacts? Charges may apply.")
+                                .setMessage("This will send a SMS Alert to your selected contacts including your name and location during an emergency. SMS charges may apply.")
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -220,7 +224,7 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                                                 System.out.println("Sent to " + number);
                                             }
 
-                                            Toast.makeText(getActivity().getApplicationContext(), "Sending messages...", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getActivity().getApplicationContext(), "Sending alert to contacts...", Toast.LENGTH_LONG).show();
 
                                         }
 

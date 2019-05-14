@@ -45,7 +45,7 @@
             android:id="@+id/panicbutton"
             android:layout_width="match_parent"
             android:layout_height="177dp"
-            android:layout_margin="80dp"
+            android:layout_marginTop="50dp"
             app:cb_color="#CC3333"
             app:cb_pressedRingWidth="8dip" />
 

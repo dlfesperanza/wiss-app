@@ -66,6 +66,8 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
     String savedContactsLocal;
     Type type;
     String name;
+    String savedName;
+    String messageToSend;
 //    JSONObject selectedListObj = new JSONObject();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,38 +89,8 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
 
         Log.d("TAG"," EMERGENCY FRAGMENT = " + contacts);
 
-        String savedName = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedName", "");
-        if (savedName.equals("")){
-            android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getActivity());
-            alertDialog.setTitle("Input Name");
-            final EditText input = new EditText(getContext());
-            int maxLength = 25;
-            input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
 
 
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            input.setLayoutParams(lp);
-
-            alertDialog.setView(input);
-
-            alertDialog.setPositiveButton("Save",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            String name = input.getText().toString();
-                            setName(name);
-                            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("savedName", name).apply();
-                        }
-                    });
-            alertDialog.setNegativeButton("Cancel",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-            alertDialog.show();
-        }else setName(savedName);
 
 
 
@@ -239,12 +211,46 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                                     public void onClick(DialogInterface dialog, int whichButton) {
+                                        savedName = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedName", "");
 
                                         if (contactList.size() == 0) Toast.makeText(getActivity().getApplicationContext(), "No contacts selected yet.", Toast.LENGTH_LONG).show();
                                         else{
+                                            if (savedName.equals("")){
+                                                android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getActivity());
+                                                alertDialog.setTitle("Input Name");
+                                                final EditText input = new EditText(getContext());
+                                                int maxLength = 25;
+                                                input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+
+
+                                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                                        LinearLayout.LayoutParams.MATCH_PARENT);
+                                                input.setLayoutParams(lp);
+
+                                                alertDialog.setView(input);
+
+                                                alertDialog.setPositiveButton("Save",
+                                                        new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                Toast.makeText(getActivity().getApplicationContext(), "Sending alert to contacts...", Toast.LENGTH_LONG).show();
+                                                                String name = input.getText().toString();
+                                                                setName(name);
+                                                                PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("savedName", name).apply();
+                                                            }
+                                                        });
+                                                alertDialog.setNegativeButton("Cancel",
+                                                        new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.cancel();
+                                                            }
+                                                        });
+                                                alertDialog.show();
+                                            }else setName(savedName);
+
                                             System.out.println("*****SAVED NAME: " + getName());
 
-                                            String messageToSend;
+
                                             if (savedLocation == null){
                                                 messageToSend = "EMERGENCY ALERT: Pls send help. Sent "+currentTime + " by "+getName();
 
@@ -259,7 +265,11 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                                                 System.out.println("Sent to " + number);
                                             }
 
-                                            Toast.makeText(getActivity().getApplicationContext(), "Sending alert to contacts...", Toast.LENGTH_LONG).show();
+                                            if (!savedName.equals("") && contactList.size() != 0){
+
+                                                Toast.makeText(getActivity().getApplicationContext(), "Sending alert to contacts...", Toast.LENGTH_LONG).show();
+
+                                            }
 
                                         }
 

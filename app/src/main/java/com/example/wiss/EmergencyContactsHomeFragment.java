@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.appcompat.app.ActionBar;
@@ -90,6 +91,7 @@ public class EmergencyContactsHomeFragment extends Fragment {
 
         if (contacts != null){
             String[] items = contacts.toArray(new String[contacts.size()]);
+            Arrays.sort(items);
 
             ListView listView = (ListView) view.findViewById(R.id.listview_favcontacts);
 //        ArrayAdapter<String> simpleCursorAdapter = new ArrayAdapter<String>(view.getContext(),R.layout.item_contactdisplay,R.id.displaytextview,items);

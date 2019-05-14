@@ -32,6 +32,8 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -134,7 +136,8 @@ public class EmergencyContactsFragment extends Fragment{
             }
         }
 
-            String[] items = list.toArray(new String[list.size()]);
+        String[] items = list.toArray(new String[list.size()]);
+//        Arrays.sort(items);
 
 //        System.out.println(Arrays.toString(items));
 

@@ -28,13 +28,16 @@ import com.example.wiss.data.EmergencyContactsFragment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import androidx.appcompat.app.ActionBar;
@@ -55,6 +58,7 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
     private ActionBar toolbar;
     TextView textView;
     JSONObject obj = new JSONObject();
+    JSONObject obj2 = new JSONObject();
     List<String> contactList = new ArrayList<>();
     SharedPreferences appSharedPrefs;
     Gson gson = new Gson();
@@ -128,6 +132,37 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
 //                contacts.add(obj);
 
             }
+
+
+            JSONArray keys = obj.names();
+            ArrayList<String>sortedKeys = new ArrayList();
+            System.out.println(keys);
+
+            final List<String> list = new ArrayList<String>();  //list of contact numbers
+            for (int i=0; i<keys.length(); i++) {
+                try {
+                    list.add( keys.getString(i) );
+                    sortedKeys.add(keys.get(i).toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Collections.sort(sortedKeys);
+            for (int i = 0; i < keys.length(); i++) {
+                String name = sortedKeys.get(i);
+                String number = "";
+                for (int j = 0; j < keys.length(); j++) {
+                    if (name.equals(keys.get(j).toString())){
+                        number = (String) obj.get(keys.getString(j));
+                        break;
+                    }
+                }
+                obj2.put(name, number);
+
+
+            }
+            System.out.println("=======sorted" + obj2);
             phones.close();
         }
         catch (Exception e){
@@ -136,10 +171,10 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
 
         if (contacts != null){
             for (String temp : contacts) {
-                if (obj.has(temp)) {
+                if (obj2.has(temp)) {
                     try {
-                        System.out.println("in obj: "+obj.getString(temp));
-                        contactList.add(obj.getString(temp));
+                        System.out.println("in obj: "+obj2.getString(temp));
+                        contactList.add(obj2.getString(temp));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -169,7 +204,7 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                 fragmentManager = getFragmentManager();
 
                 Bundle args=new Bundle();
-                String phoneContacts=obj.toString();
+                String phoneContacts=obj2.toString();
                 args.putString("phoneContacts", phoneContacts);
 
                 System.out.println("contacts to pass emergency fragment: "+phoneContacts);

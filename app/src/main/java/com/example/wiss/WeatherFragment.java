@@ -126,6 +126,7 @@ public class WeatherFragment extends Fragment{
 
 //        city = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedCity", "Manila, PH");
 
+
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
         Gson gson = new Gson();
@@ -134,6 +135,8 @@ public class WeatherFragment extends Fragment{
         savedLoc = gson.fromJson(json,type);
 
         Log.d("TAG","LOCATION = " + savedLoc);
+
+        if (savedLoc == null) city = "Manila, PH";
 
 
 
@@ -206,8 +209,7 @@ public class WeatherFragment extends Fragment{
         }
 
         protected String doInBackground(String... args) {
-            latitude = getLatitude();
-            longitude = getLongitude();
+
 
             String xml;
 
@@ -220,6 +222,8 @@ public class WeatherFragment extends Fragment{
 //                    longitude = getLongitude();
 //                    System.out.println("IN BACKGROUND: " + latitude + ". " + longitude);
 //                }
+                latitude = getLatitude();
+                longitude = getLongitude();
                 xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/forecast?lat="+latitude+"&lon="+longitude+"&appid=" + OPEN_WEATHER_MAP_API);
             }else{
                 xml = WeatherFunction.excuteGet("http://api.openweathermap.org/data/2.5/forecast?q=" + args[0] + "&units=metric&appid=" + OPEN_WEATHER_MAP_API);

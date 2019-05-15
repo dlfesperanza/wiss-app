@@ -68,7 +68,7 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
     String name;
     String savedName;
     String messageToSend;
-//    JSONObject selectedListObj = new JSONObject();
+    //    JSONObject selectedListObj = new JSONObject();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -206,75 +206,105 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
                 final Date currentTime = Calendar.getInstance().getTime();
 
                 new AlertDialog.Builder(getContext())
-                                .setTitle("Emergency Button")
-                                .setMessage("This will send a SMS Alert to your selected contacts including your name and location during an emergency. SMS charges may apply.")
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        .setTitle("Emergency Button")
+                        .setMessage("This will send a SMS Alert to your selected contacts including your name and location during an emergency. SMS charges may apply.")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        savedName = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedName", "");
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String nameStr;
+                                savedName = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedName", "");
 
-                                        if (contactList.size() == 0) Toast.makeText(getActivity().getApplicationContext(), "No contacts selected yet.", Toast.LENGTH_LONG).show();
-                                        else{
-                                            if (savedName.equals("")){
-                                                android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getActivity());
-                                                alertDialog.setTitle("Input Name");
-                                                final EditText input = new EditText(getContext());
-                                                int maxLength = 25;
-                                                input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
-
-
-                                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                                        LinearLayout.LayoutParams.MATCH_PARENT);
-                                                input.setLayoutParams(lp);
-
-                                                alertDialog.setView(input);
-
-                                                alertDialog.setPositiveButton("Save",
-                                                        new DialogInterface.OnClickListener() {
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                Toast.makeText(getActivity().getApplicationContext(), "Sending alert to contacts...", Toast.LENGTH_LONG).show();
-                                                                String name = input.getText().toString();
-                                                                setName(name);
-                                                                PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("savedName", name).apply();
-                                                            }
-                                                        });
-                                                alertDialog.setNegativeButton("Cancel",
-                                                        new DialogInterface.OnClickListener() {
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.cancel();
-                                                            }
-                                                        });
-                                                alertDialog.show();
-                                            }else setName(savedName);
-
-                                            System.out.println("*****SAVED NAME: " + getName());
+                                if (contactList.size() == 0) Toast.makeText(getActivity().getApplicationContext(), "No contacts selected yet.", Toast.LENGTH_LONG).show();
+                                else{
+                                    if (savedName.equals("")){
+                                        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getActivity());
+                                        alertDialog.setTitle("Input Name");
+                                        final EditText input = new EditText(getContext());
+                                        int maxLength = 25;
+                                        input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
 
 
-                                            if (savedLocation == null){
-                                                messageToSend = "EMERGENCY ALERT: Pls send help. Sent "+currentTime + " by "+getName();
+                                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                                LinearLayout.LayoutParams.MATCH_PARENT);
+                                        input.setLayoutParams(lp);
 
-                                            }else{
-                                                messageToSend = "EMERGENCY ALERT: Pls send help at http://maps.google.com/maps?q=loc:"+savedLocation.get(1)+","+savedLocation.get(0)+". Sent "+currentTime + " by "+getName();
+                                        alertDialog.setView(input);
 
-                                            }
-                                            System.out.println(messageToSend);
+                                        alertDialog.setPositiveButton("Save",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        Toast.makeText(getActivity().getApplicationContext(), "Sending alert to contacts...", Toast.LENGTH_LONG).show();
+                                                        name = input.getText().toString();
 
-                                            for (String number : contactList){
-                                                SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
-                                                System.out.println("Sent to " + number);
-                                            }
+                                                        System.out.println("*****SET NAME: " + name);
 
-                                            if (!savedName.equals("") && contactList.size() != 0){
+                                                        if (savedLocation == null){
+                                                            messageToSend = "EMERGENCY ALERT: Pls send help. Sent "+currentTime + " by "+ name;
 
-                                                Toast.makeText(getActivity().getApplicationContext(), "Sending alert to contacts...", Toast.LENGTH_LONG).show();
+                                                        }else{
+                                                            messageToSend = "EMERGENCY ALERT: Pls send help at http://maps.google.com/maps?q=loc:"+savedLocation.get(1)+","+savedLocation.get(0)+". Sent "+currentTime + " by "+ name;
 
-                                            }
+                                                        }
+
+                                                        System.out.println(messageToSend);
+
+                                                        for (String number : contactList){
+                                                            SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
+                                                            System.out.println("Sent to " + number);
+                                                        }
+
+                                                        if (!savedName.equals("") && contactList.size() != 0){
+
+                                                            Toast.makeText(getActivity().getApplicationContext(), "Sending alert to contacts...", Toast.LENGTH_LONG).show();
+
+                                                        }
+                                                        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("savedName", name).apply();
+                                                    }
+                                                });
+                                        alertDialog.setNegativeButton("Cancel",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.cancel();
+                                                    }
+                                                });
+                                        alertDialog.show();
+                                    }else{
+                                        if (savedLocation == null){
+                                            messageToSend = "EMERGENCY ALERT: Pls send help. Sent "+currentTime + " by "+ savedName;
+
+                                        }else{
+                                            messageToSend = "EMERGENCY ALERT: Pls send help at http://maps.google.com/maps?q=loc:"+savedLocation.get(1)+","+savedLocation.get(0)+". Sent "+currentTime + " by "+ savedName;
 
                                         }
 
-                    }})
-                .setNegativeButton(android.R.string.no, null).show();
+                                        System.out.println(messageToSend);
+
+                                        for (String number : contactList){
+                                            SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
+                                            System.out.println("Sent to " + number);
+                                        }
+
+                                        if (!savedName.equals("") && contactList.size() != 0){
+
+                                            Toast.makeText(getActivity().getApplicationContext(), "Sending alert to contacts...", Toast.LENGTH_LONG).show();
+
+                                        }
+                                    }
+
+                                    savedName = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("savedName", "");
+
+
+                                    System.out.println("*****SAVED NAME: " + getName());
+
+
+
+
+
+                                }
+
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
 //
 
 
@@ -282,11 +312,13 @@ public class EmergencyFragment extends Fragment implements View.OnClickListener 
         }
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
     public String getName(){
         return this.name;
     }
 
-    public void setName(String name){
-        this.name = name;
-    }
+
 }
